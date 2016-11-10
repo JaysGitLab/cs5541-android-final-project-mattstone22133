@@ -78,7 +78,10 @@ class Stave: SKNode {
         return noteSpacing
     }
     
-    func findSnapPositionOrNil(PointToCheck testPoint:CGPoint) -> CGPoint?{
+    func findSnapPositionOrNil(PointToCheck testPointUnconverted:CGPoint, CurrentStavePos offset:CGPoint) -> CGPoint?{
+        //make test point that reflects the stave offset
+        let testPoint = CGPoint(x: testPointUnconverted.x - offset.x, y: testPointUnconverted.y - offset.y)
+        
         let ret:CGPoint? = nil
         let threshold = noteSpacing / 2     //if it is half way to a bar, snap to it. This will prevent collisions
         let barWidthOffset = (barContainer.children[0] as! BarSprite).getImgHeight()
@@ -86,7 +89,7 @@ class Stave: SKNode {
         for bar in barContainer.children {
             //test to see if y is within the threshold
             if abs(testPoint.y - bar.position.y) < threshold{
-                return CGPoint(x: testPoint.x, y: bar.position.y + barWidthOffset) //snap to the same x, but different y
+                return CGPoint(x: testPoint.x + offset.x, y: bar.position.y + offset.y) //snap to the same x, but different y
             }
         }
         

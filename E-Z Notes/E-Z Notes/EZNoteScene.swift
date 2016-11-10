@@ -154,7 +154,9 @@ class EZNoteScene: SKScene {
     func snapOrDropNote(note:SKNode){
         
         //if there is a position to snap to, then do it!
-        if let snapToPoint = stave.findSnapPositionOrNil(PointToCheck: note.position){
+        if var snapToPoint = stave.findSnapPositionOrNil(PointToCheck: note.position, CurrentStavePos: stave.position){
+            //snapToPoint.x = snapToPoint.x + stave.position.x //convert x relative to position of stave
+            //snapToPoint.y = snapToPoint.y + stave.position.y //convert y relative to position of stave
             let move = SKAction.move(to: snapToPoint, duration: 0.25)   //duration is in seconds
             note.run(move)
             
