@@ -138,9 +138,7 @@ class EZNoteScene: SKScene {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         let touch = touches.first
-        
-        
-        
+      
         
         //check if the touch was associated with a note
         if let note = touchNotePairs[touch!]{
@@ -157,7 +155,9 @@ class EZNoteScene: SKScene {
         
         //if there is a position to snap to, then do it!
         if let snapToPoint = stave.findSnapPositionOrNil(PointToCheck: note.position){
-            SKAction.move(to: snapToPoint, duration: 1)
+            let move = SKAction.move(to: snapToPoint, duration: 0.25)   //duration is in seconds
+            note.run(move)
+            
         } else {
             //there is no snap position, let the note slowly fall to the bottom of the screen.
         }

@@ -74,4 +74,8 @@ class BarSprite: SKNode {
             inode.isHidden = hidden
         }
     }
+    
+    func getImgHeight() -> CGFloat{
+        return (containedSprites.children[0] as! SKSpriteNode).size.height
+    }
 }
