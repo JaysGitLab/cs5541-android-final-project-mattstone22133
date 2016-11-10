@@ -11,16 +11,21 @@ import SpriteKit
 
 class Stave: SKNode {
     var barContainer:SKNode = SKNode()
-    var screenHeight:CGFloat = 600  //this should be updated in init, this is set for testing purposes
-    var screenWidth:CGFloat = 400   //TODO change this, it is set for debuggin purposes
-    //let noteSpacing:CGFloat = 10.0  //adjust this to change distance between bars
+    var screenHeight:CGFloat
+    var screenWidth:CGFloat
     var numberOfBars = 26   //this number includes hidden bars
-    
+    var noteSpacing:CGFloat{
+        get{
+            //since logic behind note spacing is frequently changed, this getter is provided.
+            //modify this getter so that noteSpacing logic is propogated throughout class.
+            return screenHeight * 0.6 / CGFloat(numberOfBars)
+        }
+    }
     
     init(Height height:CGFloat, Width width:CGFloat){
-        super.init()
         self.screenHeight = height
         self.screenWidth = width
+        super.init()
         addChild(barContainer)
         buildBarsBottomUp()
         
@@ -29,17 +34,20 @@ class Stave: SKNode {
     
     required init?(coder aDecoder: NSCoder) {
         //frameSize = aDecoder.decodeObject(forKey: "frameSize") as! CGSize //EXAMPLE
+        screenHeight = aDecoder.decodeObject(forKey: "screenHeight") as! CGFloat
+        screenWidth = aDecoder.decodeObject(forKey: "screenWidth") as! CGFloat
         super.init(coder: aDecoder) //called after this object has be inits fields
     }
     
     override func encode(with aCoder: NSCoder) {
         super.encode(with: aCoder) //called before this object encodes any fields
+        aCoder.encode(screenHeight, forKey: "screenHeight")
+        aCoder.encode(screenWidth, forKey: "screenWidth")
         //aCoder.encode(frameSize, forKey:"frameSize") //EXAMPLE
     }
     
     func buildBarsBottomUp(){
-        let noteSpacing = screenHeight * 0.6 / CGFloat(numberOfBars)
-        
+        let noteSpacing = self.noteSpacing  //avoid recalculation overhead by saving in local variable
         for i in 0..<numberOfBars {
             let tempSprite = BarSprite(sizeBarNeedsToCover: screenWidth)
             tempSprite.position = CGPoint(x: 0, y: noteSpacing * CGFloat(i))
@@ -65,4 +73,19 @@ class Stave: SKNode {
         
     }
     
+    func getHalfBarDistance() -> CGFloat{
+        //return calculateNoteSpacing()
+        return noteSpacing
+    }
+    
+    func findSnapPositionOrNil(PointToCheck testPoint:CGPoint) -> CGPoint?{
+        let testPoint = CGPoint(x: 300, y: 300)
+        
+        for bar in barContainer.children {
+            
+        }
+        
+        
+        return testPoint
+    }
 }
