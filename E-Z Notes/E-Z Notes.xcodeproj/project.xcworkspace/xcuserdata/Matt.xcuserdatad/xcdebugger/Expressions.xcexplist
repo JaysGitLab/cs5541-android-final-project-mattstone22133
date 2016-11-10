@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "EZNoteScene.createNotes() -&gt; ():EZNoteScene.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.frameSize.height * CGFloat(i) * (equalSpacing)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
