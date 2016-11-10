@@ -18,7 +18,7 @@ class Stave: SKNode {
         get{
             //since logic behind note spacing is frequently changed, this getter is provided.
             //modify this getter so that noteSpacing logic is propogated throughout class.
-            return screenHeight * 0.6 / CGFloat(numberOfBars)
+            return screenHeight * 0.7 / CGFloat(numberOfBars)
         }
     }
     
@@ -84,11 +84,12 @@ class Stave: SKNode {
         
         let ret:CGPoint? = nil
         let threshold = noteSpacing / 2     //if it is half way to a bar, snap to it. This will prevent collisions
-        let barWidthOffset = (barContainer.children[0] as! BarSprite).getImgHeight()
+        //let barWidthOffset = (barContainer.children[0] as! BarSprite).getImgHeight()
         
         for bar in barContainer.children {
             //test to see if y is within the threshold
             if abs(testPoint.y - bar.position.y) < threshold{
+                //the return statement adds back the offset so that the point is realistic in the view that called this method
                 return CGPoint(x: testPoint.x + offset.x, y: bar.position.y + offset.y) //snap to the same x, but different y
             }
         }
