@@ -64,7 +64,7 @@ class EZNoteScene: SKScene {
         let maximumNoteSize = 2 * stave.noteSpacing //note spacing is equal to half the distance between bars, thus mult by 2
         
         for i in 0..<numOfNotes { //init each note as a child of the notes
-            let nextNote = SKSpriteNode(imageNamed: "ez_note_30x30.png")
+            let nextNote = Note(imageNamed: "ez_note_30x30.png")
 
             //scale the note for bar size
             let scaleFactor = calculateScaleFactor(MaxNoteSize: maximumNoteSize, CurrentNoteHeight: nextNote.size.height)
@@ -123,7 +123,7 @@ class EZNoteScene: SKScene {
         //loop through notes and see which note was touched
         for noteNode in notes.children {
             //Cast note:SKNode to a sprite node
-            let note = noteNode as! SKSpriteNode //WARNING: if we decide to switch custom class, we will need to change cast
+            let note = noteNode as! Note //WARNING: if we decide to switch custom class, we will need to change cast
             
             //Collection position of current note
             let notesPosition = note.position
@@ -132,6 +132,11 @@ class EZNoteScene: SKScene {
             if positionsAreSameWithinThreshold(notesPosition, touchPosition!, note.size) {
                 // connect the note to the finger for touches moved
                 touchNotePairs[touch!] = note
+                
+                // check if taped two times, if so change state
+                if (touch?.tapCount)! > 1 {
+                    note.changeNormSharpFlat()
+                }
             }
         }
     }

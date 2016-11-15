@@ -15,6 +15,7 @@
 		C94E06B41DCB6EC3008A0955 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C94E06B31DCB6EC3008A0955 /* Assets.xcassets */; };
 		C94E06B71DCB6EC3008A0955 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C94E06B51DCB6EC3008A0955 /* LaunchScreen.storyboard */; };
 		C94E06BF1DCB6FFB008A0955 /* EZNoteScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94E06BE1DCB6FFB008A0955 /* EZNoteScene.swift */; };
+		C994CD101DDB60A300118988 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = C994CD0F1DDB60A300118988 /* Note.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		C94E06B61DCB6EC3008A0955 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C94E06B81DCB6EC3008A0955 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C94E06BE1DCB6FFB008A0955 /* EZNoteScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EZNoteScene.swift; sourceTree = "<group>"; };
+		C994CD0F1DDB60A300118988 /* Note.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Note.swift; path = ../Note.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 		C94E06A51DCB6EC3008A0955 /* E-Z Notes */ = {
 			isa = PBXGroup;
 			children = (
+				C994CD0F1DDB60A300118988 /* Note.swift */,
 				C9301B301DD2294000C92A4A /* BarSprite.swift */,
 				C94E06A61DCB6EC3008A0955 /* AppDelegate.swift */,
 				C94E06AE1DCB6EC3008A0955 /* GameViewController.swift */,
@@ -151,6 +154,7 @@
 				C9301B2F1DD2273D00C92A4A /* Stave.swift in Sources */,
 				C94E06A71DCB6EC3008A0955 /* AppDelegate.swift in Sources */,
 				C94E06BF1DCB6FFB008A0955 /* EZNoteScene.swift in Sources */,
+				C994CD101DDB60A300118988 /* Note.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
