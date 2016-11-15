@@ -160,6 +160,7 @@ class EZNoteScene: SKScene {
             
         } else {
             //there is no snap position, let the note slowly fall to the bottom of the screen.
+            //TODO implement this
         }
         
     }

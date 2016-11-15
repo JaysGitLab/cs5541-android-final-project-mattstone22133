@@ -35,7 +35,7 @@ class GameViewController: UIViewController {
             //return .allButUpsideDown
             return .landscape
         } else {
-            return .all //TODO test w/ ipad simulator
+            return .portrait //TODO test w/ ipad simulator
         }
     }
     
