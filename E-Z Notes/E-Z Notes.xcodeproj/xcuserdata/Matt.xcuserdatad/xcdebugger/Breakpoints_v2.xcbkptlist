@@ -41,45 +41,29 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "E-Z Notes/EZNoteScene.swift"
-            timestampString = "500917756.790674"
+            filePath = "E-Z Notes/Stave.swift"
+            timestampString = "501090833.897743"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "160"
-            endingLineNumber = "160"
-            landmarkName = "snapOrDropNote(note:)"
+            startingLineNumber = "121"
+            endingLineNumber = "121"
+            landmarkName = "findNoteValueAndOctave(note:futureNotePosition:StavePosition:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "E-Z Notes/EZNoteScene.swift"
-            timestampString = "500917756.790674"
+            filePath = "E-Z Notes/Stave.swift"
+            timestampString = "501131882.857041"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "150"
-            endingLineNumber = "150"
-            landmarkName = "touchesEnded(_:with:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "E-Z Notes/EZNoteScene.swift"
-            timestampString = "500917756.790674"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "163"
-            endingLineNumber = "163"
-            landmarkName = "snapOrDropNote(note:)"
+            startingLineNumber = "137"
+            endingLineNumber = "137"
+            landmarkName = "findNoteValueAndOctave(note:futureNotePosition:StavePosition:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

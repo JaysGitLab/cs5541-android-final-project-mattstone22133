@@ -13,7 +13,7 @@ class EZNoteScene: SKScene {
     let frameSize:CGSize
     let stave:Stave //TODO: change initialization to the init method (needs screen size)
     let notes:SKNode
-    var touchNotePairs:[UITouch : SKNode]
+    var touchNotePairs:[UITouch : Note]
     let touchThresholdScalar: CGFloat = 2.0 //increasing this value will make it easier to touch notes, but harder to distinguish
 
     
@@ -100,7 +100,7 @@ class EZNoteScene: SKScene {
         notes = aDecoder.decodeObject(forKey: "notes") as! SKNode
         stave = aDecoder.decodeObject(forKey: "stave") as! Stave
 
-        touchNotePairs = aDecoder.decodeObject(forKey: "touchNotePairs") as! [UITouch : SKNode]
+        touchNotePairs = aDecoder.decodeObject(forKey: "touchNotePairs") as! [UITouch : Note]
         super.init(coder: aDecoder)
     }
     
@@ -148,7 +148,8 @@ class EZNoteScene: SKScene {
         //check if the touch was associated with a note
         if let note = touchNotePairs[touch!]{
             //there was a note, try to snap it to a bar or let it fall to bottom of screen
-            snapOrDropNote(note: note)
+            let futurePoint:CGPoint? = snapOrDropNote(note: note)
+            stave.findNoteValueAndOctave(note: note, futureNotePosition: futurePoint, StavePosition: stave.position)
         }
         
         //remove touch and note pair from dictionary
@@ -156,16 +157,18 @@ class EZNoteScene: SKScene {
         
     }
     
-    func snapOrDropNote(note:SKNode){
+    func snapOrDropNote(note:SKNode) -> CGPoint?{
         
         //if there is a position to snap to, then do it!
         if let snapToPoint = stave.findSnapPositionOrNil(PointToCheck: note.position, CurrentStavePos: stave.position){
             let move = SKAction.move(to: snapToPoint, duration: 0.25)   //duration is in seconds
             note.run(move)
+            return snapToPoint //used to calculate the note's
             
         } else {
             //there is no snap position, let the note slowly fall to the bottom of the screen.
             //TODO implement this
+            return nil  //this will be used to check the note value, make sure to return nil if note is falling to floor of app
         }
         
     }
@@ -202,5 +205,15 @@ class EZNoteScene: SKScene {
         } else {
             return false
         }
+    }
+    
+    //untested, uses closure delegate to determine how to sort an array of notes
+    func getNotesSortedByX() -> [Note]?{
+        var unsorted = notes.children as! [Note]
+        let closure = {(first: Note, second: Note) -> Bool in
+            return first.position.x < second.position.x
+        }
+        unsorted.sort(by: closure)
+        return unsorted;    //now sorted
     }
 }

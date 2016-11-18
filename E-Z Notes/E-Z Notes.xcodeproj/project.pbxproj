@@ -16,6 +16,8 @@
 		C94E06B71DCB6EC3008A0955 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C94E06B51DCB6EC3008A0955 /* LaunchScreen.storyboard */; };
 		C94E06BF1DCB6FFB008A0955 /* EZNoteScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94E06BE1DCB6FFB008A0955 /* EZNoteScene.swift */; };
 		C994CD101DDB60A300118988 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = C994CD0F1DDB60A300118988 /* Note.swift */; };
+		C994CD121DDDF6C500118988 /* NoteEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = C994CD111DDDF6C500118988 /* NoteEnum.swift */; };
+		C994CD141DDDF6D100118988 /* OctaveEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = C994CD131DDDF6D100118988 /* OctaveEnum.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,8 @@
 		C94E06B81DCB6EC3008A0955 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C94E06BE1DCB6FFB008A0955 /* EZNoteScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EZNoteScene.swift; sourceTree = "<group>"; };
 		C994CD0F1DDB60A300118988 /* Note.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Note.swift; path = ../Note.swift; sourceTree = "<group>"; };
+		C994CD111DDDF6C500118988 /* NoteEnum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NoteEnum.swift; path = ../NoteEnum.swift; sourceTree = "<group>"; };
+		C994CD131DDDF6D100118988 /* OctaveEnum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OctaveEnum.swift; path = ../OctaveEnum.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +66,8 @@
 		C94E06A51DCB6EC3008A0955 /* E-Z Notes */ = {
 			isa = PBXGroup;
 			children = (
+				C994CD131DDDF6D100118988 /* OctaveEnum.swift */,
+				C994CD111DDDF6C500118988 /* NoteEnum.swift */,
 				C994CD0F1DDB60A300118988 /* Note.swift */,
 				C9301B301DD2294000C92A4A /* BarSprite.swift */,
 				C94E06A61DCB6EC3008A0955 /* AppDelegate.swift */,
@@ -151,6 +157,8 @@
 			files = (
 				C9301B311DD2294000C92A4A /* BarSprite.swift in Sources */,
 				C94E06AF1DCB6EC3008A0955 /* GameViewController.swift in Sources */,
+				C994CD141DDDF6D100118988 /* OctaveEnum.swift in Sources */,
+				C994CD121DDDF6C500118988 /* NoteEnum.swift in Sources */,
 				C9301B2F1DD2273D00C92A4A /* Stave.swift in Sources */,
 				C94E06A71DCB6EC3008A0955 /* AppDelegate.swift in Sources */,
 				C94E06BF1DCB6FFB008A0955 /* EZNoteScene.swift in Sources */,

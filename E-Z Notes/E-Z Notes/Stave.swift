@@ -78,6 +78,13 @@ class Stave: SKNode {
         return noteSpacing
     }
     
+    //
+    //NOTE: the note positions are relative to view frame, but stave position is relative to itself. We must convert one position.
+    //To convert the note's position, we subtract the position of the stave (offset). This difference represents the position of the
+    //note relative to the stave. This is done because position 0,0 of stave is actualy at offset.x and offset.y. The note's
+    //position can be thought to include "offset.x and offset.y" (since the finger placed it visually on the stave). Thus,
+    //we can subtract out these positions to get the true position of the note in local coordinate system of the stave.
+    //
     func findSnapPositionOrNil(PointToCheck testPointUnconverted:CGPoint, CurrentStavePos offset:CGPoint) -> CGPoint?{
         //make test point that reflects the stave offset
         let testPoint = CGPoint(x: testPointUnconverted.x - offset.x, y: testPointUnconverted.y - offset.y)
@@ -96,4 +103,105 @@ class Stave: SKNode {
         
         return ret
     }
+    
+    //The note's position is not used, becuase it is likely being animated to a new position.
+    //Instead, use the paramter futureNotePosition provided - this is expected to be the result of a notes animation
+    //
+    //NOTE: the note positions are relative to view frame, but stave position is relative to itself. We must convert one position.
+    //To convert the note's position, we subtract the position of the stave (offset). This difference represents the position of the
+    //note relative to the stave. This is done because position 0,0 of stave is actualy at offset.x and offset.y. The note's
+    //position can be thought to include "offset.x and offset.y" (since the finger placed it visually on the stave). Thus,
+    //we can subtract out these positions to get the true position of the note in local coordinate system of the stave.
+    //
+    func findNoteValueAndOctave(note:Note, futureNotePosition:CGPoint?, StavePosition offset:CGPoint?){
+        if futureNotePosition == nil || offset == nil {
+            return
+        }
+        
+        //create a point that represents where the note is relative to the stave position
+        let correctedPoint = CGPoint(x: futureNotePosition!.x - offset!.x, y: futureNotePosition!.y - offset!.y)
+        
+        //the calculation below is similar to the findSnapPositionOrNil, this could be included in that function
+        //that being said, resources are not an issue for this app; therefore we are separating this from the snap function
+        //because they provide two separate uses to the overall application. This keeps the app logic more easily understandable.
+        var noteEnum:NoteEnum? = nil
+        var octaveEnum:OctaveEnum? = nil
+        let threshold = noteSpacing / 2     //if it is half way to a bar, snap to it. This will prevent collisions
+        var barsCounted = 0
+        
+        //loop through all the bars and find the bar the note belongs to.
+        for bar in barContainer.children {
+            //test to see if y is within the threshold
+            if abs(correctedPoint.y - bar.position.y) < threshold{
+                //point found!
+                noteEnum = findNoteEnumByBarNumber(barsCounted: barsCounted, note: note)
+                octaveEnum = OctaveEnum.getOctave(barNumber: barsCounted, note: note)
+                break;  //get out of loop
+            }
+            barsCounted += 1
+        }
+        
+        //note.setNote(value: noteEnum)
+        note.representsNote = noteEnum     //will be nil or a value
+        note.representsOctave = octaveEnum //will be set ot nil or value
+    }
+    
+    //this enum provides notes as seen on bar (no sharps or flats)
+    //sharps and flats are calculated after the fact
+    enum PseudoNote: Int{
+        case E = 0
+        case F
+        case G
+        case A
+        case B
+        case C
+        case D
+        static var count: Int { return PseudoNote.D.rawValue + 1}
+    }
+    
+    func findNoteEnumByBarNumber(barsCounted:Int, note:Note) -> NoteEnum{
+        //find the pseudo note (lacking sharps and flats)
+        let pseudoIndex = barsCounted % PseudoNote.count                //trim this down to the range within pseudo notes
+        let pNote:PseudoNote = Stave.PseudoNote(rawValue: pseudoIndex)!  // the pseudo  note!
+        
+        //NOTICE: if a value doesn't have a flat/sharp, the equivalent note will be returned (one note up/down)
+        return convertPseudoNoteToNote(note: note, pNoteVal: pNote)
+
+   }
+    
+    func convertPseudoNoteToNote(note:Note, pNoteVal:PseudoNote) -> NoteEnum {
+        let normalNoteConvert = normalNoteTable(psuedoNote: pNoteVal)
+        
+        if note.normal {
+            return normalNoteConvert
+        } else if note.sharp {
+            let sharpUnconverted = normalNoteConvert.rawValue + 1
+            let sharpConverted = (sharpUnconverted + NoteEnum.count) % NoteEnum.count;  //ensures it is within range and not below 0
+            return NoteEnum(rawValue: sharpConverted)!
+        } else {
+            let flatUnconverted = normalNoteConvert.rawValue - 1
+            let flatConverted = (flatUnconverted + NoteEnum.count) % NoteEnum.count;  //ensures it is within range and not below 0
+            return NoteEnum(rawValue: flatConverted)!
+        }
+    }
+    
+    func normalNoteTable(psuedoNote:PseudoNote) -> NoteEnum{
+        switch psuedoNote {
+        case PseudoNote.A:
+            return NoteEnum.A
+        case PseudoNote.B:
+            return NoteEnum.B
+        case PseudoNote.C:
+            return NoteEnum.C
+        case PseudoNote.D:
+            return NoteEnum.D
+        case PseudoNote.E:
+            return NoteEnum.E
+        case PseudoNote.F:
+            return NoteEnum.F
+        case PseudoNote.G:
+            return NoteEnum.G
+        }
+    }
+    
 }

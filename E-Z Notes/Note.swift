@@ -10,14 +10,18 @@ import UIKit
 import SpriteKit
 
 class Note: SKSpriteNode {
-    var normal:Bool = true
-    var sharp:Bool = false
-    var flat:Bool = false
-    
     //textures are static to prevent redundantly creating the same textures for each note
     static let redTexture = SKTexture(imageNamed: "ez_note_red_30x30.png")
     static let blueTexture = SKTexture(imageNamed: "ez_note_blue_30x30.png")
     static let blackTexture = SKTexture(imageNamed: "ez_note_30x30.png")
+    
+    //fields/properties
+    var normal:Bool = true
+    var sharp:Bool = false
+    var flat:Bool = false
+    var representsNote:NoteEnum? = nil //nil values signal that note is not correctly placed
+    var representsOctave:OctaveEnum? = nil  //nil value signal invalid octave
+    
     
     func changeNormSharpFlat(){
         if normal {
