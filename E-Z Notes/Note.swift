@@ -45,4 +45,16 @@ class Note: SKSpriteNode {
         }
     }
     
+    func playNote(){
+        if let noteTuple = representsNote?.toStringTuple(){
+            let noteSoundFileStr = "Sounds/"
+                + noteTuple.0
+                + representsOctave!.toString()
+                + noteTuple.1
+                + ".wav"
+            run(SKAction.playSoundFileNamed(noteSoundFileStr, waitForCompletion: false))
+        } else {
+            print("\n\nFAILED TO LOAD SOUND\n\n")
+        }
+    }
 }

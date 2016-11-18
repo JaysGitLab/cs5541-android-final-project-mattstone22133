@@ -14,7 +14,7 @@ class EZNoteScene: SKScene {
     let stave:Stave //TODO: change initialization to the init method (needs screen size)
     let notes:SKNode
     var touchNotePairs:[UITouch : Note]
-    let touchThresholdScalar: CGFloat = 2.0 //increasing this value will make it easier to touch notes, but harder to distinguish
+    let touchThresholdScalar: CGFloat = 2.5 //increasing this value will make it easier to touch notes, but harder to distinguish (2.0 is a decent value)
 
     
     
@@ -150,6 +150,9 @@ class EZNoteScene: SKScene {
             //there was a note, try to snap it to a bar or let it fall to bottom of screen
             let futurePoint:CGPoint? = snapOrDropNote(note: note)
             stave.findNoteValueAndOctave(note: note, futureNotePosition: futurePoint, StavePosition: stave.position)
+            if futurePoint != nil {
+                note.playNote()
+            }
         }
         
         //remove touch and note pair from dictionary

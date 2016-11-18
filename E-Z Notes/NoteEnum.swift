@@ -24,4 +24,33 @@ enum NoteEnum : Int{
     case DsharpEb
     static var count:Int {return NoteEnum.DsharpEb.rawValue + 1}
 
+    
+    func toStringTuple() -> (String, String){
+        switch (self){
+        case .E:
+            return ("E", "")
+        case .F:
+            return ("F","")
+        case .FsharpGb:
+            return ("F", "SHARP")
+        case .G:
+            return ("G","")
+        case .GsharpAb:
+            return ("G","SHARP")
+        case .A:
+            return ("A","")
+        case .AsharpBb:
+            return ("A", "SHARP")
+        case .B:
+            return ("B", "")
+        case .C:
+            return ("C","")
+        case .CsharpDb:
+            return ("C","SHARP")
+        case .D:
+            return ("D","")
+        case .DsharpEb:
+            return ("D","SHARP")
+        }
+    }
 }

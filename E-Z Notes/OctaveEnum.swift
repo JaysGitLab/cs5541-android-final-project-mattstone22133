@@ -24,6 +24,7 @@ enum OctaveEnum : Int {
         // C -> D -> E (off by 2)
         return 2
     }
+    
     static func getOctave(barNumber:Int, note:Note) -> OctaveEnum{
         //create an offset for flats/sharps
         var sharpFlatOffset = 0
@@ -53,6 +54,20 @@ enum OctaveEnum : Int {
         default:
             return OctaveEnum.invalid
         }
-        
+    }
+    
+    func toString() -> String{
+        switch (self){
+        case .two:
+            return "2"
+        case .three:
+            return "3"
+        case .four:
+            return "4"
+        case .five:
+            return "5"
+        default:
+            return "INVALID_OCTAVE"
+        }
     }
 }
