@@ -53,4 +53,16 @@ enum NoteEnum : Int{
             return ("D","SHARP")
         }
     }
+    
+    static func getSharpNote(note:NoteEnum) -> NoteEnum{
+        let sharpUnconverted = note.rawValue + 1
+        let sharpConverted = (sharpUnconverted) % NoteEnum.count;  //ensures it is within range and not below 0
+        return NoteEnum(rawValue: sharpConverted)!
+    }
+    
+    static func getFlatNote(note:NoteEnum) -> NoteEnum{
+        let flatUnconverted = note.rawValue - 1
+        let flatConverted = (flatUnconverted + NoteEnum.count) % NoteEnum.count;  //ensures it is within range and not below 0
+        return NoteEnum(rawValue: flatConverted)!
+    }
 }

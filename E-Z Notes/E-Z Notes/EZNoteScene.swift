@@ -10,21 +10,24 @@ import UIKit
 import SpriteKit
 
 class EZNoteScene: SKScene {
-    let frameSize:CGSize
+    var frameSize:CGSize
     let stave:Stave //TODO: change initialization to the init method (needs screen size)
     let notes:SKNode
     var touchNotePairs:[UITouch : Note]
     let touchThresholdScalar: CGFloat = 2.5 //increasing this value will make it easier to touch notes, but harder to distinguish (2.0 is a decent value)
 
-    
-    
     //testing fields
-    //let bar = BarSprite(sizeBarNeedsToCover: 300) //TODO
-    
-    
     init(Framesize framesize:CGSize){
         //init fields before calling super.init(size:)
         frameSize = framesize //NOTE: swift doesn't allow putting these inits in another method
+        
+        //correct if app was booted from landscape mode (swift will not allow me to put this in a function)
+        if framesize.height > framesize.width {
+            frameSize = framesize
+        } else {
+            frameSize = CGSize(width: framesize.height, height: framesize.width)
+        }
+        
         stave = Stave(Height: frameSize.width, Width: frameSize.height) //height and width are swapped in landscape
         notes = SKNode()
         touchNotePairs = [:]
@@ -35,22 +38,18 @@ class EZNoteScene: SKScene {
         self.backgroundColor = UIColor.white
         
         //Set up staves
-        //set so that it starts at the 1/3 mark of the screen
+        //set so that it starts at the 1/4 mark of the screen
         stave.position = CGPoint(x: 0, y: framesize.width * 0.25) //width and height are swapped in landscape
         addChild(stave)
         
         //Set up notes
         createNotes()
         
-        //debugging/testing 
-        //let bar = BarSprite(sizeBarNeedsToCover: framesize.height)
-        //self.addChild(bar)
-        //bar.position = CGPoint(x: 0, y: 100)
-        //self.addChild(SKSpriteNode(imageNamed: "ez_bar_2x100.png"))
-        //self.addChild(SKSpriteNode(imageNamed: "GenericActorSprite.png"))
-
  
     }
+    
+ 
+
     
     func swapWidthHeight(_ sizeToSwap:CGSize) -> CGSize {
         return CGSize(width: sizeToSwap.height, height: sizeToSwap.width)
@@ -219,4 +218,6 @@ class EZNoteScene: SKScene {
         unsorted.sort(by: closure)
         return unsorted;    //now sorted
     }
+    
+
 }

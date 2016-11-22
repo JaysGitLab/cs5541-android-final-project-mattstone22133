@@ -21,14 +21,20 @@ class Stave: SKNode {
             return screenHeight * 0.7 / CGFloat(numberOfBars)
         }
     }
+    var trebleClef:SKSpriteNode = SKSpriteNode(imageNamed: "TrebleClef300x300")
     
     init(Height height:CGFloat, Width width:CGFloat){
         self.screenHeight = height
         self.screenWidth = width
         super.init()
+        
+        //set up bars
         addChild(barContainer)
         buildBarsBottomUp()
         
+        //set up clefs
+        addChild(trebleClef)
+        setupClefs()
         
     }
     
@@ -166,8 +172,8 @@ class Stave: SKNode {
         
         //NOTICE: if a value doesn't have a flat/sharp, the equivalent note will be returned (one note up/down)
         return convertPseudoNoteToNote(note: note, pNoteVal: pNote)
-
-   }
+        
+    }
     
     func convertPseudoNoteToNote(note:Note, pNoteVal:PseudoNote) -> NoteEnum {
         let normalNoteConvert = normalNoteTable(psuedoNote: pNoteVal)
@@ -175,13 +181,15 @@ class Stave: SKNode {
         if note.normal {
             return normalNoteConvert
         } else if note.sharp {
-            let sharpUnconverted = normalNoteConvert.rawValue + 1
-            let sharpConverted = (sharpUnconverted + NoteEnum.count) % NoteEnum.count;  //ensures it is within range and not below 0
-            return NoteEnum(rawValue: sharpConverted)!
+            // let sharpUnconverted = normalNoteConvert.rawValue + 1
+            //let sharpConverted = (sharpUnconverted + NoteEnum.count) % NoteEnum.count; //ensures it is within range and not below 0
+            // return NoteEnum(rawValue: sharpConverted)!
+            return NoteEnum.getSharpNote(note: normalNoteConvert)
         } else {
-            let flatUnconverted = normalNoteConvert.rawValue - 1
-            let flatConverted = (flatUnconverted + NoteEnum.count) % NoteEnum.count;  //ensures it is within range and not below 0
-            return NoteEnum(rawValue: flatConverted)!
+            // let flatUnconverted = normalNoteConvert.rawValue - 1
+            // let flatConverted = (flatUnconverted + NoteEnum.count) % NoteEnum.count;  //ensures it is within range and not below 0
+            // return NoteEnum(rawValue: flatConverted)!
+            return NoteEnum.getFlatNote(note: normalNoteConvert)
         }
     }
     
@@ -202,6 +210,58 @@ class Stave: SKNode {
         case PseudoNote.G:
             return NoteEnum.G
         }
+    }
+    
+    func pseudoNoteTable(normalNote:NoteEnum) -> PseudoNote {
+        switch normalNote{
+        case NoteEnum.A, NoteEnum.AsharpBb:
+            return PseudoNote.A
+        case NoteEnum.B:
+            return PseudoNote.B
+        case NoteEnum.C, NoteEnum.CsharpDb:
+            return PseudoNote.C
+        case NoteEnum.D, NoteEnum.DsharpEb:
+            return PseudoNote.D
+        case NoteEnum.E:
+            return PseudoNote.E
+        case NoteEnum.F, NoteEnum.FsharpGb:
+            return PseudoNote.F
+        case NoteEnum.G, NoteEnum.GsharpAb:
+            return PseudoNote.G
+
+        }
+    }
+    
+    func setupClefs() {
+        setupTrebleClef()
+        
+        
+    }
+    
+    func setupTrebleClef(){
+        //Image related constants (in order to place circle in center, file size had to be larger
+        let yCorrectionFactor:CGFloat = 5/8   // actual image is roughly 5/8 height of file
+        let xCorrectionFactor:CGFloat = 1/3   // actual image is roughly 1/3 width of file
+        
+        //SCALE TREBLE CLEF so that is spans an entire bar, plus two steps above and below
+        //get size of entire bar (note distance between 1 bar is 2*noteSpacing
+        let entireStaveSize = (noteSpacing * 2) * 7 //5 bars + 2 spaces on edge
+        let trebleClefYSize = trebleClef.size.height * yCorrectionFactor //img does not match height
+        let yScaleFactor = entireStaveSize/trebleClefYSize
+        trebleClef.yScale = yScaleFactor
+        
+        //X SCALE
+        let specifiedScreenWidth = self.screenWidth * 0.08 //percentage of screen width (note landscape)
+        let trebleCleftXSize = trebleClef.size.width * xCorrectionFactor
+        let scaledWidth = specifiedScreenWidth / trebleCleftXSize
+        trebleClef.xScale = scaledWidth //NOTE: clef image is huge to allow appropriate center
+        
+        //Position
+    }
+    
+    func getNotePosition(note:NoteEnum, octave:OctaveEnum, stavePositionOffset:CGPoint) -> CGPoint{
+        
+        return CGPoint(x: 0, y:0 )
     }
     
 }
