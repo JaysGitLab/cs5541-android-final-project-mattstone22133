@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/Stave.swift"
-            timestampString = "501521937.636343"
+            timestampString = "502127081.58537"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "127"
-            endingLineNumber = "127"
+            startingLineNumber = "130"
+            endingLineNumber = "130"
             landmarkName = "findNoteValueAndOctave(note:futureNotePosition:StavePosition:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/Stave.swift"
-            timestampString = "501521937.636343"
+            timestampString = "502127081.58537"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "143"
-            endingLineNumber = "143"
+            startingLineNumber = "146"
+            endingLineNumber = "146"
             landmarkName = "findNoteValueAndOctave(note:futureNotePosition:StavePosition:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -73,29 +73,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Note.swift"
-            timestampString = "501137184.458342"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "57"
-            endingLineNumber = "57"
-            landmarkName = "playNote()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "E-Z Notes/Stave.swift"
-            timestampString = "501528836.471615"
+            timestampString = "502127208.81575"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "231"
-            endingLineNumber = "231"
-            landmarkName = "pseudoNoteTable(normalNote:)"
+            startingLineNumber = "299"
+            endingLineNumber = "299"
+            landmarkName = "getNotePosition(note:octave:stavePositionOffset:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

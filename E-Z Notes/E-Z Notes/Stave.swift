@@ -21,7 +21,8 @@ class Stave: SKNode {
             return screenHeight * 0.7 / CGFloat(numberOfBars)
         }
     }
-    var trebleClef:SKSpriteNode = SKSpriteNode(imageNamed: "TrebleClef300x300")
+    var trebleClef:SKSpriteNode = SKSpriteNode(imageNamed: "TrebleClef300x300.png")
+    var bassClef:SKSpriteNode = SKSpriteNode(imageNamed: "BassClef300x300.png")
     
     init(Height height:CGFloat, Width width:CGFloat){
         self.screenHeight = height
@@ -34,7 +35,9 @@ class Stave: SKNode {
         
         //set up clefs
         addChild(trebleClef)
+        addChild(bassClef)
         setupClefs()
+        
         
     }
     
@@ -141,7 +144,7 @@ class Stave: SKNode {
             if abs(correctedPoint.y - bar.position.y) < threshold{
                 //point found!
                 noteEnum = findNoteEnumByBarNumber(barsCounted: barsCounted, note: note)
-                octaveEnum = OctaveEnum.getOctave(barNumber: barsCounted, note: note)
+                octaveEnum = OctaveEnum.getOctave(barNumber: barsCounted, note: note) //TODO I think broken
                 break;  //get out of loop
             }
             barsCounted += 1
@@ -234,14 +237,14 @@ class Stave: SKNode {
     
     func setupClefs() {
         setupTrebleClef()
-        
+        setupBaseCleft()
         
     }
     
     func setupTrebleClef(){
         //Image related constants (in order to place circle in center, file size had to be larger
-        let yCorrectionFactor:CGFloat = 5/8   // actual image is roughly 5/8 height of file
-        let xCorrectionFactor:CGFloat = 1/3   // actual image is roughly 1/3 width of file
+        let yCorrectionFactor:CGFloat = 5/8.0   // actual image is roughly 5/8 height of file
+        let xCorrectionFactor:CGFloat = 1/3.0  // actual image is roughly 1/3 width of file
         
         //SCALE TREBLE CLEF so that is spans an entire bar, plus two steps above and below
         //get size of entire bar (note distance between 1 bar is 2*noteSpacing
@@ -257,11 +260,72 @@ class Stave: SKNode {
         trebleClef.xScale = scaledWidth //NOTE: clef image is huge to allow appropriate center
         
         //Position
+        var gPoint:CGPoint = getNotePosition(note: NoteEnum.G,
+                                             octave: OctaveEnum.four,
+                                             stavePositionOffset: CGPoint(x:0, y:0)) //no offset, this is internal call
+        gPoint.x = screenWidth * 0.1 //set x to 1/10th of the screen
+        trebleClef.position = gPoint
     }
     
-    func getNotePosition(note:NoteEnum, octave:OctaveEnum, stavePositionOffset:CGPoint) -> CGPoint{
+    func setupBaseCleft(){
+        //Image related constants (in order to place circle in center, file size had to be larger
+        let yCorrectionFactor:CGFloat = 13/16.0   // actual image is roughly * height of file
+        let xCorrectionFactor:CGFloat = 5.0/8.0  // actual image is roughly * width of file
         
-        return CGPoint(x: 0, y:0 )
+        //SCALE BASS CLEF so that is spans an entire bar, plus two steps above and below
+        //get size of entire bar (note distance between 1 bar is 2*noteSpacing
+        let entireStaveSize = (noteSpacing * 2) * 7 //5 bars + 2 spaces on edge
+        let bassClefYSize = bassClef.size.height * yCorrectionFactor //img does not match height
+        let yScaleFactor = entireStaveSize/bassClefYSize
+        bassClef.yScale = yScaleFactor
+        
+        //X SCALE
+        let specifiedScreenWidth = self.screenWidth * 0.08 //percentage of screen width (note landscape)
+        let bassClefXSize = bassClef.size.width * xCorrectionFactor
+        let scaledWidth = specifiedScreenWidth / bassClefXSize
+        bassClef.xScale = scaledWidth //NOTE: clef image is huge to allow appropriate center
+        
+        //Position
+        var fPoint:CGPoint = getNotePosition(note: NoteEnum.F,
+                                             octave: OctaveEnum.three,
+                                             stavePositionOffset: CGPoint(x:0, y:0)) //no offset, this is internal call
+        fPoint.x = screenWidth * 0.1 //set x to 1/10th of the screen
+        bassClef.position = fPoint
     }
+    
+    //Warning: behavior for sharps and flats is not intuitive. Sharps will be on the line of the base note, flats will below it.
+    //e.g. Csharp will give you the location of C. Cflat will give you the location of B
+    func getNotePosition(note:NoteEnum, octave:OctaveEnum, stavePositionOffset:CGPoint) -> CGPoint{
+        var noteDistance:Int
+        var convertedNote:PseudoNote
+        
+        //find distance from lowest note to the note being tested (E is where the stave starts)
+        if (note.rawValue >= NoteEnum.E.rawValue){ //Enum E has lower value, therefore distance is just subtraction
+            convertedNote = pseudoNoteTable(normalNote: note)
+            noteDistance = convertedNote.rawValue - PseudoNote.E.rawValue
+        } else {//UNTESTED CONDITION
+            //this should not happen, but is added in case internal enum logic is later changed
+            convertedNote = pseudoNoteTable(normalNote: note)
+            //(negative + total notes = note's pos)
+            noteDistance = PseudoNote.E.rawValue - convertedNote.rawValue + PseudoNote.count
+        }
+        
+        //add in the difference in octaves
+        var octaveDifference = octave.rawValue - OctaveEnum.two.rawValue    //two is the lowest octave of the app
+        
+        //notes C and D are special in our scheme because we start counting notes at E. This means that C and D are one octave
+        //higher than they should be in our position scheme. Our scheme has a "fake" octave that starts like this:
+        // 2E,2F,2G, 2A, 2B, 3C, 3D ; therefore if C or D are encountered, then we have added one too many octaves.
+        if convertedNote == PseudoNote.C || convertedNote == PseudoNote.D {
+            octaveDifference -= 1
+        }
+        noteDistance = noteDistance + octaveDifference * PseudoNote.count
+        
+        let retx = screenWidth * 0.5 + stavePositionOffset.x
+        let rety = CGFloat(noteDistance) * noteSpacing + stavePositionOffset.y
+        return CGPoint(x: retx, y: rety) //UNTESTED
+    }
+    
+
     
 }

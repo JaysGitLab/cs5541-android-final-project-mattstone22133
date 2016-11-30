@@ -151,6 +151,7 @@ class EZNoteScene: SKScene {
             stave.findNoteValueAndOctave(note: note, futureNotePosition: futurePoint, StavePosition: stave.position)
             if futurePoint != nil {
                 note.playNote()
+                note.updateNote(NotesUpdatedPoint: futurePoint!, StavePositionInView: stave.position, Stave: stave)
             }
         }
         
