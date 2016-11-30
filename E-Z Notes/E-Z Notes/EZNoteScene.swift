@@ -29,6 +29,7 @@ class EZNoteScene: SKScene {
         }
         
         stave = Stave(Height: frameSize.width, Width: frameSize.height) //height and width are swapped in landscape
+
         notes = SKNode()
         touchNotePairs = [:]
         super.init(size: framesize)
@@ -39,7 +40,7 @@ class EZNoteScene: SKScene {
         
         //Set up staves
         //set so that it starts at the 1/4 mark of the screen
-        stave.position = CGPoint(x: 0, y: framesize.width * 0.25) //width and height are swapped in landscape
+        stave.position = CGPoint(x: 0, y: frameSize.width * 0.25) //width and height are swapped in landscape
         addChild(stave)
         
         //Set up notes
@@ -67,7 +68,8 @@ class EZNoteScene: SKScene {
 
             //scale the note for bar size
             let scaleFactor = calculateScaleFactor(MaxNoteSize: maximumNoteSize, CurrentNoteHeight: nextNote.size.height)
-            nextNote.setScale(scaleFactor)
+            //nextNote.setScale(scaleFactor)
+            nextNote.customScale(ScaleFactor: scaleFactor)
             
             //height and width are swapped for landscape only applications
             nextNote.position = CGPoint(x: frameSize.height * CGFloat(i) * (equalSpacing) + offsetX,

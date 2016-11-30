@@ -3,6 +3,20 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "Note.scaleSubSpriteToFitInNote(Sprite : SKSpriteNode) -&gt; ():Note.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.size.width">
+            </PersistentString>
+            <PersistentString
+               value = "sprite.size.width">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Note.positionSubSprites() -&gt; ():Note.swift">
+      </ContextState>
+      <ContextState
          contextName = "EZNoteScene.createNotes() -&gt; ():EZNoteScene.swift">
          <PersistentStrings>
             <PersistentString
