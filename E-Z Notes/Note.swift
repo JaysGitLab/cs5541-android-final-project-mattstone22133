@@ -12,8 +12,8 @@ import SpriteKit
 
 class Note: SKSpriteNode {
     //textures are static to prevent redundantly creating the same textures for each note
-    static let redTexture = SKTexture(imageNamed: "ez_note_red_30x30.png")
-    static let blueTexture = SKTexture(imageNamed: "ez_note_blue_30x30.png")
+    static let redTexture = SKTexture(imageNamed: "ez_note_red_30x30_label.png")
+    static let blueTexture = SKTexture(imageNamed: "ez_note_blue_30x30_label.png")
     static let blackTexture = SKTexture(imageNamed: "ez_note_30x30.png")
     static let aTexture = SKTexture(imageNamed: "A.png")
     static let bTexture = SKTexture(imageNamed: "B.png")
