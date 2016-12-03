@@ -39,7 +39,7 @@ class Note: SKSpriteNode {
     var representsNote:NoteEnum? = nil //nil values signal that note is not correctly placed
     var representsOctave:OctaveEnum? = nil  //nil value signal invalid octave
     
-    var showLabel = true
+    var showLabel = true    //TODO make a didSet that will hide any notes currently showing labels
     
     
     init(imageNamed:String){ //TODO instead of adding noteLabel on every updateNote call, do it here.
@@ -65,6 +65,32 @@ class Note: SKSpriteNode {
         setUpLabels()
     }
     
+    init(noteToCopy:Note){
+        super.init(texture: Note.blackTexture, color: SKColor.clear, size: Note.blackTexture.size())
+        self.position = CGPoint(x: noteToCopy.position.x, y: noteToCopy.position.y)
+        self.flat = noteToCopy.flat
+        self.sharp = noteToCopy.sharp
+        self.normal = noteToCopy.normal
+        
+        if sharp {
+            self.texture = Note.redTexture
+        } else if (flat) {
+            self.texture = Note.blueTexture
+        }
+        
+        self.showLabel = noteToCopy.showLabel
+        if noteToCopy.representsNote != nil{
+            self.representsNote = NoteEnum(rawValue: noteToCopy.representsNote!.rawValue)
+        }
+        if noteToCopy.representsOctave != nil {
+            self.representsOctave = OctaveEnum(rawValue: noteToCopy.representsOctave!.rawValue)
+        }
+
+        addChild(noteLabelSprite)
+        addChild(noteOctaveSprite)
+        setUpLabels()
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
@@ -75,12 +101,12 @@ class Note: SKSpriteNode {
                 unHideSubSprites()
                 setOctaveNumberText()
                 setNoteLetterText()
-            } else {
-                //if it is not a valid note, do not show labels.
-                hideSubSprites()
+                
+                return  //prevents the label from being hidden
             }
-            
         }
+        //if it is not a valid note, do not show labels.
+        hideSubSprites()
     }
     
     func setOctaveNumberText(){
@@ -196,6 +222,33 @@ class Note: SKSpriteNode {
             run(SKAction.playSoundFileNamed(noteSoundFileStr, waitForCompletion: false))
         } else {
             print("\n\nFAILED TO LOAD SOUND\n\n")
+        }
+    }
+    
+    enum Pitch {
+        case Sharp
+        case Flat
+        case Normal
+    }
+    
+    //Eventually the class should probably be refactored to use the enumerations
+    func make(Pitch pitch:Note.Pitch){
+        switch pitch {
+        case Pitch.Sharp:
+            self.sharp = true
+            self.flat = false
+            self.normal = false
+            self.texture = Note.redTexture
+        case Pitch.Flat:
+            self.sharp = false
+            self.flat = true
+            self.normal = false
+            self.texture = Note.blueTexture
+        case Pitch.Normal:
+            self.sharp = false
+            self.flat = false
+            self.normal = true
+            self.texture = Note.blackTexture
         }
     }
 }

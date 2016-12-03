@@ -14,6 +14,7 @@ import UIKit
 //
 //NOTE: Octaves start at C
 enum OctaveEnum : Int {
+    case one = -1
     case two = 0
     case three
     case four

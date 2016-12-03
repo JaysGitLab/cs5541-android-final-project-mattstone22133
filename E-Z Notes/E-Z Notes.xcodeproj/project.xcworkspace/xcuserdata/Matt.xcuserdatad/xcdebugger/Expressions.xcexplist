@@ -3,6 +3,32 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "Scale.useStepsToGenerateNotes(Steps : [Scale.Tone], Start : NoteEnum) -&gt; ():Scale.swift">
+      </ContextState>
+      <ContextState
+         contextName = "EZNoteScene.touchesBegan(Set&lt;UITouch&gt;, with : UIEvent?) -&gt; ():EZNoteScene.swift">
+      </ContextState>
+      <ContextState
+         contextName = "EZNoteScene.(scalePlay() -&gt; ()).(closure #1):EZNoteScene.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "sortedNotes[1].position">
+            </PersistentString>
+            <PersistentString
+               value = "(self.notes.children)[1].position">
+            </PersistentString>
+            <PersistentString
+               value = "(self.notes.children)[0].position">
+            </PersistentString>
+            <PersistentString
+               value = "sortedNotes[0].position">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Note.positionSubSprites() -&gt; ():Note.swift">
+      </ContextState>
+      <ContextState
          contextName = "Note.scaleSubSpriteToFitInNote(Sprite : SKSpriteNode) -&gt; ():Note.swift">
          <PersistentStrings>
             <PersistentString
@@ -12,9 +38,6 @@
                value = "sprite.size.width">
             </PersistentString>
          </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "Note.positionSubSprites() -&gt; ():Note.swift">
       </ContextState>
       <ContextState
          contextName = "EZNoteScene.createNotes() -&gt; ():EZNoteScene.swift">

@@ -12,6 +12,8 @@ import GameplayKit
 
 class GameViewController: UIViewController {
     
+    @IBOutlet weak var SettingsButton: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         let view = self.view as! SKView
@@ -25,6 +27,8 @@ class GameViewController: UIViewController {
         view.presentScene(scene)
         
     }
+    
+    @IBAction func unwindToMenu(segue: UIStoryboardSegue) {}
     
     override var shouldAutorotate: Bool {
         return true

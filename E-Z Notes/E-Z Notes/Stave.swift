@@ -215,6 +215,7 @@ class Stave: SKNode {
         }
     }
     
+    //This is for the when sharp and flat do not matter TODO: consider removing
     func pseudoNoteTable(normalNote:NoteEnum) -> PseudoNote {
         switch normalNote{
         case NoteEnum.A, NoteEnum.AsharpBb:
@@ -232,6 +233,46 @@ class Stave: SKNode {
         case NoteEnum.G, NoteEnum.GsharpAb:
             return PseudoNote.G
 
+        }
+    }
+    
+    func pseudoNoteTableForSharps(normalNote:NoteEnum) -> PseudoNote {
+        switch normalNote{
+        case NoteEnum.A, NoteEnum.AsharpBb:
+            return PseudoNote.A
+        case NoteEnum.B:
+            return PseudoNote.B
+        case NoteEnum.C, NoteEnum.CsharpDb:
+            return PseudoNote.C
+        case NoteEnum.D, NoteEnum.DsharpEb:
+            return PseudoNote.D
+        case NoteEnum.E:
+            return PseudoNote.E
+        case NoteEnum.F, NoteEnum.FsharpGb:
+            return PseudoNote.F
+        case NoteEnum.G, NoteEnum.GsharpAb:
+            return PseudoNote.G
+            
+        }
+    }
+    
+    func pseudoNoteTableForFlats(normalNote:NoteEnum) -> PseudoNote {
+        switch normalNote{
+        case NoteEnum.A, NoteEnum.GsharpAb:
+            return PseudoNote.A
+        case NoteEnum.B, NoteEnum.AsharpBb:
+            return PseudoNote.B
+        case NoteEnum.C:
+            return PseudoNote.C
+        case NoteEnum.D, NoteEnum.CsharpDb:
+            return PseudoNote.D
+        case NoteEnum.E, NoteEnum.DsharpEb:
+            return PseudoNote.E
+        case NoteEnum.F:
+            return PseudoNote.F
+        case NoteEnum.G, NoteEnum.FsharpGb:
+            return PseudoNote.G
+            
         }
     }
     
@@ -295,12 +336,15 @@ class Stave: SKNode {
     
     //Warning: behavior for sharps and flats is not intuitive. Sharps will be on the line of the base note, flats will below it.
     //e.g. Csharp will give you the location of C. Cflat will give you the location of B
+    //@DEPRECATED IN FAVOR OF VERSION THAT SPECIFIES SHARP/FLAT BIAS
     func getNotePosition(note:NoteEnum, octave:OctaveEnum, stavePositionOffset:CGPoint) -> CGPoint{
         var noteDistance:Int
         var convertedNote:PseudoNote
         
         //find distance from lowest note to the note being tested (E is where the stave starts)
         if (note.rawValue >= NoteEnum.E.rawValue){ //Enum E has lower value, therefore distance is just subtraction
+            
+            //calculation
             convertedNote = pseudoNoteTable(normalNote: note)
             noteDistance = convertedNote.rawValue - PseudoNote.E.rawValue
         } else {//UNTESTED CONDITION
@@ -311,7 +355,7 @@ class Stave: SKNode {
         }
         
         //add in the difference in octaves
-        var octaveDifference = octave.rawValue - OctaveEnum.two.rawValue    //two is the lowest octave of the app
+        var octaveDifference = octave.rawValue - OctaveEnum.two.rawValue    //two is the lowest valid octave of the app
         
         //notes C and D are special in our scheme because we start counting notes at E. This means that C and D are one octave
         //higher than they should be in our position scheme. Our scheme has a "fake" octave that starts like this:
@@ -326,6 +370,41 @@ class Stave: SKNode {
         return CGPoint(x: retx, y: rety) //UNTESTED
     }
     
+    func getNotePosition(note:NoteEnum, octave:OctaveEnum, ProduceSharps sharpBias:Bool, stavePositionOffset:CGPoint) -> CGPoint{
+        var noteDistance:Int
+        var convertedNote:PseudoNote
+        
+        //find distance from lowest note to the note being tested (E is where the stave starts)
+        if (note.rawValue >= NoteEnum.E.rawValue){ //Enum E has lower value, therefore distance is just subtraction
+            
+            //calculation
+            convertedNote = sharpBias ? pseudoNoteTableForSharps(normalNote: note) : pseudoNoteTableForFlats(normalNote: note)
+            noteDistance = convertedNote.rawValue - PseudoNote.E.rawValue
+        } else {//UNTESTED CONDITION
+            //this should not happen, but is added in case internal enum logic is later changed
+            convertedNote = pseudoNoteTable(normalNote: note)
+            //(negative + total notes = note's pos)
+            noteDistance = PseudoNote.E.rawValue - convertedNote.rawValue + PseudoNote.count
+        }
+        
+        //add in the difference in octaves
+        var octaveDifference = octave.rawValue - OctaveEnum.two.rawValue    //two is the lowest valid octave of the app
+        
+        //notes C and D are special in our scheme because we start counting notes at E. This means that C and D are one octave
+        //higher than they should be in our position scheme. Our scheme has a "fake" octave that starts like this:
+        // 2E,2F,2G, 2A, 2B, 3C, 3D ; therefore if C or D are encountered, then we have added one too many octaves.
+        if convertedNote == PseudoNote.C || convertedNote == PseudoNote.D {
+            octaveDifference -= 1
+        }
+        noteDistance = noteDistance + octaveDifference * PseudoNote.count
+        
+        let retx = screenWidth * 0.5 + stavePositionOffset.x
+        let rety = CGFloat(noteDistance) * noteSpacing + stavePositionOffset.y
+        return CGPoint(x: retx, y: rety) //UNTESTED
+    }
+    
+    
+
 
     
 }

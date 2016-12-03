@@ -65,4 +65,41 @@ enum NoteEnum : Int{
         let flatConverted = (flatUnconverted + NoteEnum.count) % NoteEnum.count;  //ensures it is within range and not below 0
         return NoteEnum(rawValue: flatConverted)!
     }
+    
+    //returns an Integer as if enum started with C (useful when doing calculatings between octaves)
+    //This isn't necessarily bad code because the enum was originally used for calculating displacement on the bars.
+    //This is a quick conversion to help with some logical problems when determining scales.
+    func rawValueStartingWithC() -> Int{
+        switch self{
+        case .C: fallthrough
+        case .CsharpDb: fallthrough
+        case .D: fallthrough
+        case .DsharpEb:
+            //Get the difference between C and the current value to convert to enum values starting at C at 0
+            return 0 + self.rawValue - NoteEnum.C.rawValue
+        case .E: fallthrough
+        case .F: fallthrough
+        case .FsharpGb: fallthrough
+        case .G: fallthrough
+        case .GsharpAb: fallthrough
+        case .A: fallthrough
+        case .AsharpBb:fallthrough
+        case .B:
+            //E starts at 0, so add the difference starting at C (Dsharp - C gives use an offset value for starting at C at 0)
+            return  self.rawValue + (NoteEnum.DsharpEb.rawValue - NoteEnum.C.rawValue)
+        }
+    }
+    
+    func isFlatOrSharp() -> Bool {
+        switch self {
+        case .CsharpDb: fallthrough
+        case .DsharpEb: fallthrough
+        case .FsharpGb: fallthrough
+        case .GsharpAb: fallthrough
+        case .AsharpBb:
+            return true
+        default:
+            return false
+        }
+    }
 }
