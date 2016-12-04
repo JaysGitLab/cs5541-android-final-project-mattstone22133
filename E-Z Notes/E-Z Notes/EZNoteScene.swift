@@ -17,7 +17,7 @@ class EZNoteScene: SKScene {
     let touchThresholdScalar: CGFloat = 2.5 //increasing this value will make it easier to touch notes, but harder to distinguish (2.0 is a decent value)
     private(set) var showNoteLetters:Bool = false
     var targetScale:Scale? = nil
-    let scaleButton:SKSpriteNode = SKSpriteNode(imageNamed:"note_highlight_e-z-noteApp.png")
+    let scaleButton:SKSpriteNode = SKSpriteNode(imageNamed:"NoteButton.png")
     let highlight:SKSpriteNode = SKSpriteNode(imageNamed: "note_highlight_e-z-noteApp.png")
     var playingScale:Bool = false
 
@@ -71,8 +71,14 @@ class EZNoteScene: SKScene {
      
     }
     
+    
     func setUpScaleButton(){
+        //Set its position to top middle of screen
         scaleButton.position = CGPoint(x:frameSize.height * 0.5, y: frameSize.width * 0.95)
+        
+        //scale the button to
+        let scaleFactor = stave.noteSpacing * 3 / scaleButton.size.height
+        scaleButton.setScale(scaleFactor)
     }
     
     func setUpHighlightSprite(){

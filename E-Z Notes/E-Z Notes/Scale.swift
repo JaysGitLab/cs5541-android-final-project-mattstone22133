@@ -20,6 +20,7 @@ class Scale{
     private(set) var ScaleStart:NoteEnum = NoteEnum.C
     private(set) var PitchesInScale:[NoteEnum]? = nil
     private(set) var scaleStyle:Style = Style.Major
+    var scaleString:String? = nil
     
     enum Tone : Int{
         case Semi = 1
@@ -67,5 +68,38 @@ class Scale{
     
     func getNotes() -> [NoteEnum]?{
         return PitchesInScale
+    }
+    
+    func setScaleBasedOnString(scale:String, Style style:Scale.Style){
+        let choiceKey:NoteEnum
+        switch(scale){
+        case "C":
+            choiceKey = NoteEnum.C
+        case "C#", "Db":
+            choiceKey = NoteEnum.CsharpDb
+        case "D":
+            choiceKey = NoteEnum.D
+        case "D#","Eb":
+            choiceKey = NoteEnum.DsharpEb
+        case  "E":
+            choiceKey = NoteEnum.E
+        case "F":
+            choiceKey = NoteEnum.F
+        case "F#","Gb":
+            choiceKey = NoteEnum.FsharpGb
+        case "G":
+            choiceKey = NoteEnum.G
+        case "G#","Ab":
+            choiceKey = NoteEnum.GsharpAb
+        case "A":
+            choiceKey = NoteEnum.A
+        case "A#","Bb":
+            choiceKey = NoteEnum.AsharpBb
+        case "B":
+            choiceKey = NoteEnum.B
+        default:
+            choiceKey = NoteEnum.C
+        }
+        generateScaleNotes(Start: choiceKey, Style: style)
     }
 }
