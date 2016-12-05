@@ -20,7 +20,8 @@ class EZNoteScene: SKScene {
     let scaleButton:SKSpriteNode = SKSpriteNode(imageNamed:"NoteButton.png")
     let highlight:SKSpriteNode = SKSpriteNode(imageNamed: "note_highlight_e-z-noteApp.png")
     var playingScale:Bool = false
-
+    var lock = Lock()
+    
     //testing fields
     init(Framesize framesize:CGSize){
         //init fields before calling super.init(size:)
@@ -66,6 +67,10 @@ class EZNoteScene: SKScene {
         //Save last generated scene in static variable to act as singleton
         GlobalSpace.ezscene = self
         
+        //Lock
+        setUpLock()
+        addChild(lock)
+        
         //Debug/test
         
      
@@ -76,9 +81,18 @@ class EZNoteScene: SKScene {
         //Set its position to top middle of screen
         scaleButton.position = CGPoint(x:frameSize.height * 0.5, y: frameSize.width * 0.95)
         
-        //scale the button to
+        //scale the button to a value relative to noteSpacing values
         let scaleFactor = stave.noteSpacing * 3 / scaleButton.size.height
         scaleButton.setScale(scaleFactor)
+    }
+    
+    func setUpLock(){
+        lock.position = CGPoint(x: frameSize.height * 0.05, y: frameSize.width * 0.95)
+        
+        //scale the lock image
+        let scaleFactor = stave.noteSpacing * 3 / lock.getUnscaledSize().height
+        lock.zPosition = 1
+        lock.setScale(scaleFactor)
     }
     
     func setUpHighlightSprite(){
@@ -172,6 +186,7 @@ class EZNoteScene: SKScene {
         let touch = touches.first
         let touchPosition = touch?.location(in: notes)
         
+        
         //loop through notes and see which note was touched
         for noteNode in notes.children {
             //Cast note:SKNode to a sprite node
@@ -182,15 +197,21 @@ class EZNoteScene: SKScene {
             
             //See if the current node was touched.
             if positionsAreSameWithinThreshold(notesPosition, touchPosition!, note.size) {
-                // connect the note to the finger for touches moved
-                touchNotePairs[touch!] = note
-                
-                // check if taped two times, if so change state
-                if (touch?.tapCount)! > 1 {
-                    note.changeNormSharpFlat()
+                if !lock.isLocked() {
+                    // connect the note to the finger for touches moved
+                    touchNotePairs[touch!] = note
+                    
+                    // check if taped two times, if so change state
+                    if (touch?.tapCount)! > 1 {
+                        note.changeNormSharpFlat()
+                    }
+                } else {
+                  //Notes are locked, just play the note
+                    note.playNote()
                 }
             }
         }
+        
         
         //check if testScale button was pressed, but do nothing if there is a note being dragged
         if touchNotePairs.count <= 0
@@ -199,6 +220,11 @@ class EZNoteScene: SKScene {
                                                scaleButton.size)
         {
            scalePlay()
+        }
+        
+        //check if lock button was pressed
+        if positionsAreSameWithinThreshold(lock.position, touch!.location(in: self), lock.getScaledSize()){
+            lock.toggle()
         }
     }
 

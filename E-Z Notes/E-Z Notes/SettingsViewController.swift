@@ -17,6 +17,10 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     let scaleKeys = ["C", "C#", "Db", "D", "D#", "Eb", "E","F", "F#", "Gb","G", "G#", "Ab", "A","A#", "Bb", "B"]
     let typeIndex = 1
     let keyIndex = 0
+    
+    //Settings Menu Fields
+    static var keyIndexForSettingMenu = 0
+    static var styleIndexForSettingMenu = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +29,8 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         if let singleton:EZNoteScene = GlobalSpace.ezscene{
             showLettersOnNotesSwitch.isOn = singleton.showNoteLetters
         }
+        doublePickerKeyScale.selectRow(SettingsViewController.keyIndexForSettingMenu, inComponent: keyIndex, animated: false)
+        doublePickerKeyScale.selectRow(SettingsViewController.styleIndexForSettingMenu, inComponent: typeIndex, animated: false)
     }
 
     override func didReceiveMemoryWarning() {
@@ -38,8 +44,14 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
             singleton.setShowNotes(ShowNoteLetters: showLettersOnNotesSwitch.isOn)
             
             //Choosing scale
-            let keyString = scaleKeys[doublePickerKeyScale.selectedRow(inComponent: 0)]
-            let typeString = scaleTypes[(doublePickerKeyScale.selectedRow(inComponent: 1))]
+            
+            //Below are static because settings menu is regenerated every time it is called
+            SettingsViewController.keyIndexForSettingMenu = doublePickerKeyScale.selectedRow(inComponent: keyIndex)
+            SettingsViewController.styleIndexForSettingMenu = (doublePickerKeyScale.selectedRow(inComponent: typeIndex))
+            
+            
+            let keyString = scaleKeys[SettingsViewController.keyIndexForSettingMenu]
+            let typeString = scaleTypes[SettingsViewController.styleIndexForSettingMenu]
             var typeChoice:Scale.Style
             if typeString == "Major"{
                 typeChoice = Scale.Style.Major

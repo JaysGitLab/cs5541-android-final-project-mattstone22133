@@ -15,6 +15,7 @@
 		C94E06B41DCB6EC3008A0955 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C94E06B31DCB6EC3008A0955 /* Assets.xcassets */; };
 		C94E06B71DCB6EC3008A0955 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C94E06B51DCB6EC3008A0955 /* LaunchScreen.storyboard */; };
 		C94E06BF1DCB6FFB008A0955 /* EZNoteScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94E06BE1DCB6FFB008A0955 /* EZNoteScene.swift */; };
+		C97EEF8E1DF4E8EC00DDF63F /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97EEF8D1DF4E8EC00DDF63F /* Lock.swift */; };
 		C994CD101DDB60A300118988 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = C994CD0F1DDB60A300118988 /* Note.swift */; };
 		C994CD121DDDF6C500118988 /* NoteEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = C994CD111DDDF6C500118988 /* NoteEnum.swift */; };
 		C994CD141DDDF6D100118988 /* OctaveEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = C994CD131DDDF6D100118988 /* OctaveEnum.swift */; };
@@ -35,6 +36,7 @@
 		C94E06B61DCB6EC3008A0955 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C94E06B81DCB6EC3008A0955 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C94E06BE1DCB6FFB008A0955 /* EZNoteScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EZNoteScene.swift; sourceTree = "<group>"; };
+		C97EEF8D1DF4E8EC00DDF63F /* Lock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Lock.swift; path = ../Lock.swift; sourceTree = "<group>"; };
 		C994CD0F1DDB60A300118988 /* Note.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Note.swift; path = ../Note.swift; sourceTree = "<group>"; };
 		C994CD111DDDF6C500118988 /* NoteEnum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NoteEnum.swift; path = ../NoteEnum.swift; sourceTree = "<group>"; };
 		C994CD131DDDF6D100118988 /* OctaveEnum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OctaveEnum.swift; path = ../OctaveEnum.swift; sourceTree = "<group>"; };
@@ -74,6 +76,7 @@
 		C94E06A51DCB6EC3008A0955 /* E-Z Notes */ = {
 			isa = PBXGroup;
 			children = (
+				C97EEF8D1DF4E8EC00DDF63F /* Lock.swift */,
 				C998AE691DDEB7D2002866C3 /* Sounds */,
 				C994CD131DDDF6D100118988 /* OctaveEnum.swift */,
 				C9EF561A1DEF83BB004406CA /* GlobalSpace.swift */,
@@ -178,6 +181,7 @@
 				C9EF561D1DEF9770004406CA /* Scale.swift in Sources */,
 				C994CD101DDB60A300118988 /* Note.swift in Sources */,
 				C9EF56191DEF6D6B004406CA /* SettingsViewController.swift in Sources */,
+				C97EEF8E1DF4E8EC00DDF63F /* Lock.swift in Sources */,
 				C9EF561B1DEF83BB004406CA /* GlobalSpace.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
