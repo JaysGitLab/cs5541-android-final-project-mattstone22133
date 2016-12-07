@@ -44,7 +44,6 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
             singleton.setShowNotes(ShowNoteLetters: showLettersOnNotesSwitch.isOn)
             
             //Choosing scale
-            
             //Below are static because settings menu is regenerated every time it is called
             SettingsViewController.keyIndexForSettingMenu = doublePickerKeyScale.selectedRow(inComponent: keyIndex)
             SettingsViewController.styleIndexForSettingMenu = (doublePickerKeyScale.selectedRow(inComponent: typeIndex))

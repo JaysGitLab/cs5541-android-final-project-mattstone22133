@@ -156,6 +156,10 @@ class EZNoteScene: SKScene {
     func setShowNotes(ShowNoteLetters showNotesLettersAndOctaves:Bool){
         setAllNotesShowLetters(showNotes: showNotesLettersAndOctaves)
         self.showNoteLetters = showNotesLettersAndOctaves
+        
+        for note in notes.children as! [Note] {
+            note.updateNote(NotesUpdatedPoint:note.position, StavePositionInView: stave.position, Stave: stave)
+        }
 
     }
     
@@ -248,7 +252,7 @@ class EZNoteScene: SKScene {
         
     }
     
-    func snapOrDropNote(note:SKNode) -> CGPoint?{
+    func snapOrDropNote(note:Note) -> CGPoint?{
         
         //if there is a position to snap to, then do it!
         if let snapToPoint = stave.findSnapPositionOrNil(PointToCheck: note.position, CurrentStavePos: stave.position){
@@ -257,9 +261,9 @@ class EZNoteScene: SKScene {
             return snapToPoint //used to calculate the note's
             
         } else {
-            //there is no snap position, let the note slowly fall to the bottom of the screen.
-            //TODO implement this
-            return nil  //this will be used to check the note value, make sure to return nil if note is falling to floor of app
+            //there is no snap position, invalidate the note
+            note.makeNoteInvalid()
+            return nil
         }
         
     }

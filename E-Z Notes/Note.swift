@@ -108,10 +108,10 @@ class Note: SKSpriteNode {
                 setNoteLetterText()
                 
                 return  //prevents the label from being hidden
+            } else {
+                //if it is not a valid note, do not show labels.
+                hideSubSprites()
             }
-        } else {
-            //if it is not a valid note, do not show labels.
-            hideSubSprites()
         }
     }
     
@@ -256,5 +256,11 @@ class Note: SKSpriteNode {
             self.normal = true
             self.texture = Note.blackTexture
         }
+    }
+    
+    func makeNoteInvalid(){
+        representsNote = nil
+        representsOctave = nil
+        hideSubSprites()
     }
 }
