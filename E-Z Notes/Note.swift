@@ -96,6 +96,11 @@ class Note: SKSpriteNode {
     }
     
     func updateNote(NotesUpdatedPoint futurePnt:CGPoint, StavePositionInView stavePos: CGPoint, Stave stave:Stave){
+        
+        //Update Internal Data
+        stave.findNoteValueAndOctave(note: self, futureNotePosition: futurePnt, StavePosition: stavePos)
+        
+        //Update Images
         if showLabel {
             if representsNote != nil && representsOctave != nil && !sharp && !flat {
                 unHideSubSprites()
@@ -104,9 +109,10 @@ class Note: SKSpriteNode {
                 
                 return  //prevents the label from being hidden
             }
+        } else {
+            //if it is not a valid note, do not show labels.
+            hideSubSprites()
         }
-        //if it is not a valid note, do not show labels.
-        hideSubSprites()
     }
     
     func setOctaveNumberText(){

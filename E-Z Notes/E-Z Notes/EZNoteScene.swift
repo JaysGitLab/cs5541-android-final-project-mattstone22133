@@ -22,7 +22,6 @@ class EZNoteScene: SKScene {
     var playingScale:Bool = false
     var lock = Lock()
     
-    //testing fields
     init(Framesize framesize:CGSize){
         //init fields before calling super.init(size:)
         frameSize = framesize //NOTE: swift doesn't allow putting these inits in another method
@@ -268,7 +267,7 @@ class EZNoteScene: SKScene {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches{
             if let note = touchNotePairs[touch] {
-                note.position = touch.location(in: notes) //may be a coordinate conversion issue
+                note.position = touch.location(in: notes)
             }
         }
     }
@@ -402,19 +401,14 @@ class EZNoteScene: SKScene {
                 }
             }
             //move note to correct y position (if needed) (delay)
-
-            //
             let useSharpsTF:Bool = targetScale.scaleStyle == Scale.Style.Major ? true : false
-
-            //let sharpBias = if targetScale.type
             var correctLocation = self.stave.getNotePosition(note: currentScaleNoteEnum, octave: octave, ProduceSharps: useSharpsTF,
                                                              stavePositionOffset: self.stave.position)
             
             //use sharps or flats? currently using sharps if scale is major and flats if the scale is minor
-            //let useSharpsTF:Bool = targetScale.scaleStyle == Scale.Style.Major ? true : false
             stave.findNoteValueAndOctave(note: currPlayerNoteObj, futureNotePosition: correctLocation, StavePosition: stave.position)
             adjustNoteAppearanceForFlatSharp(note: currPlayerNoteObj, correctNoteEnum: currentScaleNoteEnum, useSharps: useSharpsTF)
-
+            
             
             correctLocation.x = currPlayerNoteObj.position.x
             
@@ -429,8 +423,6 @@ class EZNoteScene: SKScene {
             //play note (delay) (must retype this code incase octave isn't valid
             currPlayerNoteObj.playNote()
             Thread.sleep(forTimeInterval: playNoteDelay)
-            
-            //TODO: unlock the note
             
             
         }
@@ -453,6 +445,7 @@ class EZNoteScene: SKScene {
             if useSharps {
                 //make player's note sharp
                 note.make(Pitch: Note.Pitch.Sharp)
+                
             } else {
                 //make player's note flat
                 note.make(Pitch: Note.Pitch.Flat)
