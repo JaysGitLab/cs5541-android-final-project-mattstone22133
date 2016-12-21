@@ -21,6 +21,8 @@ class EZNoteScene: SKScene {
     let highlight:SKSpriteNode = SKSpriteNode(imageNamed: "note_highlight_e-z-noteApp.png")
     var playingScale:Bool = false
     var lock = Lock()
+    var scalePlayer:ScalePlayer? = nil
+    var keyboard:Keyboard? = nil
     
     init(Framesize framesize:CGSize){
         //init fields before calling super.init(size:)
@@ -69,6 +71,15 @@ class EZNoteScene: SKScene {
         //Lock
         setUpLock()
         addChild(lock)
+        
+        //ScalePlayer set up (Dummy values are note used)
+        scalePlayer = ScalePlayer(TargetScale: targetScale!, NoteCollection: notes,
+                                  HighlightSprite: highlight, TouchNotePairs: touchNotePairs, StaveObject: stave)
+        
+        //set up the visual piano keyboard
+        keyboard = Keyboard(frameSize: CGSize(width:frameSize.height, height: frameSize.width))
+        keyboard!.position.x = frameSize.height / 2
+        addChild(keyboard!)
         
         //Debug/test
         
@@ -129,7 +140,7 @@ class EZNoteScene: SKScene {
             
             //height and width are swapped for landscape only applications
             nextNote.position = CGPoint(x: frameSize.height * CGFloat(i) * (equalSpacing) + offsetX,
-                                        y: frameSize.width * (equalSpacing))
+                                        y: frameSize.width * 0.20 ) //frameSize.width * (equalSpacing))
             //make z value place object later in draw queue (make it draw it above everything else)
             nextNote.zPosition = 1
             
@@ -222,7 +233,9 @@ class EZNoteScene: SKScene {
                                                touch!.location(in: self),
                                                scaleButton.size)
         {
-           scalePlay()
+           //scalePlay() //this is the old scale methods (that were inside class), left until new scale method is functional
+            scalePlayer?.playAScale(TargetScale: targetScale!, NoteCollection: notes,
+                                    HighlightSprite: highlight, TouchNotePairs: touchNotePairs, StaveObject: stave)
         }
         
         //check if lock button was pressed
@@ -302,6 +315,21 @@ class EZNoteScene: SKScene {
         }
     }
     
+    //This method has no ties to any properties (thresholdScalar, etc)
+    func positionCompareWithThreshold(_ first:CGPoint, _ second:CGPoint, _ threshold:CGFloat) -> Bool {
+        //check that x and y are within the radius defined threshold(limit)
+        if first.x < second.x + threshold
+            && first.x > second.x - threshold
+            && first.y < second.y + threshold
+            && first.y > second.y - threshold
+        {
+            //the points overlap within the threshold, return true
+            return true
+            
+        } else {
+            return false
+        }
+    }
     
     
     
@@ -391,6 +419,7 @@ class EZNoteScene: SKScene {
             //TODO MAKE THIS CHECK PITCH
             let useSharpsTF:Bool = targetScale.scaleStyle == Scale.Style.Major ? true : false
             adjustNoteAppearanceForFlatSharp(note: currPlayerNoteObj, correctNoteEnum: currentScaleNoteEnum, useSharps: useSharpsTF)
+            //adjustNoteAppearanceForFlatSharpCorrectNote(note: currPlayerNoteObj, correctNoteEnum: currentScaleNoteEnum, useSharps: useSharpsTF)
             
         }
         //PLAYER DID NOT CHOOSE RIGHT NOTE POSITION (May or may not have choses right sharp/flat status)
@@ -455,10 +484,45 @@ class EZNoteScene: SKScene {
                 note.make(Pitch: Note.Pitch.Flat)
             }
         } else {
-            //make player note normal (even if it already was normal
+            //only make note normal if it the note's position matches the normal position (otherwise it may be an normal note derived  by accidental (sharp/flat)
+            if let notesOctave = note.representsOctave {
+                let thisNotesPos = stave.getNotePosition(note: correctNoteEnum, octave: notesOctave, ProduceSharps: useSharps, stavePositionOffset: stave.position)
+                //Only convert note to normal if it is positioned in the correct spot (Cflat will register as B, but shouldn't be normal)
+                if positionCompareWithThreshold(note.position, thisNotesPos, stave.noteSpacing * 0.1){
+                    //make player note normal (even if it already was normal)
+                    note.make(Pitch: Note.Pitch.Normal)
+                }
+            }
+
+            //make player note normal (even if it already was normal)
             note.make(Pitch: Note.Pitch.Normal)
+            
         }
     }
+    
+    func adjustNoteAppearanceForFlatSharpCorrectNote(note:Note, correctNoteEnum:NoteEnum, useSharps:Bool){
+        if correctNoteEnum.isFlatOrSharp() {
+            if useSharps {
+                //make player's note sharp
+                note.make(Pitch: Note.Pitch.Sharp)
+                
+            } else {
+                //make player's note flat
+                note.make(Pitch: Note.Pitch.Flat)
+            }
+        } else {
+            //only make note normal if it the note's position matches the normal position (otherwise it may be an normal note derived  by accidental (sharp/flat)
+            if let notesOctave = note.representsOctave {
+                let thisNotesPos = stave.getNotePosition(note: correctNoteEnum, octave: notesOctave, ProduceSharps: useSharps, stavePositionOffset: stave.position)
+                //Only convert note to normal if it is positioned in the correct spot (Cflat will register as B, but shouldn't be normal)
+                if positionCompareWithThreshold(note.position, thisNotesPos, stave.noteSpacing * 0.1){
+                    //make player note normal (even if it already was normal)
+                    note.make(Pitch: Note.Pitch.Normal)
+                }
+            }
+        }
+    }
+    
     
     func scaleHelperFindPlayersFirstOctaveValue(array:[Note]) -> OctaveEnum? {
         //the array is reverse for quick removal
@@ -516,6 +580,7 @@ class EZNoteScene: SKScene {
     func sortNodesByXReverse(first:SKNode, second:SKNode) -> Bool{
         return first.position.x > second.position.x
     }
+    
     
     //method that allows segues back to this view controller from menus
     @IBAction func unwindToMenu(segue: UIStoryboardSegue) {}

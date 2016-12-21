@@ -102,4 +102,5 @@ enum NoteEnum : Int{
             return false
         }
     }
+    
 }

@@ -20,9 +20,11 @@
 		C994CD121DDDF6C500118988 /* NoteEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = C994CD111DDDF6C500118988 /* NoteEnum.swift */; };
 		C994CD141DDDF6D100118988 /* OctaveEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = C994CD131DDDF6D100118988 /* OctaveEnum.swift */; };
 		C998AE6A1DDEB7D2002866C3 /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = C998AE691DDEB7D2002866C3 /* Sounds */; };
+		C9ABC9251E08745F00FCF827 /* Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9ABC9241E08745F00FCF827 /* Keyboard.swift */; };
 		C9EF56191DEF6D6B004406CA /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EF56181DEF6D6B004406CA /* SettingsViewController.swift */; };
 		C9EF561B1DEF83BB004406CA /* GlobalSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EF561A1DEF83BB004406CA /* GlobalSpace.swift */; };
 		C9EF561D1DEF9770004406CA /* Scale.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EF561C1DEF9770004406CA /* Scale.swift */; };
+		C9FCDDF91DFB51CE00CFC99C /* ScalePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9FCDDF81DFB51CE00CFC99C /* ScalePlayer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,9 +43,11 @@
 		C994CD111DDDF6C500118988 /* NoteEnum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NoteEnum.swift; path = ../NoteEnum.swift; sourceTree = "<group>"; };
 		C994CD131DDDF6D100118988 /* OctaveEnum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OctaveEnum.swift; path = ../OctaveEnum.swift; sourceTree = "<group>"; };
 		C998AE691DDEB7D2002866C3 /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Sounds; path = ../Sounds; sourceTree = "<group>"; };
+		C9ABC9241E08745F00FCF827 /* Keyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keyboard.swift; sourceTree = "<group>"; };
 		C9EF56181DEF6D6B004406CA /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		C9EF561A1DEF83BB004406CA /* GlobalSpace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GlobalSpace.swift; path = ../GlobalSpace.swift; sourceTree = "<group>"; };
 		C9EF561C1DEF9770004406CA /* Scale.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scale.swift; sourceTree = "<group>"; };
+		C9FCDDF81DFB51CE00CFC99C /* ScalePlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ScalePlayer.swift; path = ../ScalePlayer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +84,7 @@
 				C998AE691DDEB7D2002866C3 /* Sounds */,
 				C994CD131DDDF6D100118988 /* OctaveEnum.swift */,
 				C9EF561A1DEF83BB004406CA /* GlobalSpace.swift */,
+				C9FCDDF81DFB51CE00CFC99C /* ScalePlayer.swift */,
 				C994CD111DDDF6C500118988 /* NoteEnum.swift */,
 				C9EF561C1DEF9770004406CA /* Scale.swift */,
 				C994CD0F1DDB60A300118988 /* Note.swift */,
@@ -93,6 +98,7 @@
 				C94E06B51DCB6EC3008A0955 /* LaunchScreen.storyboard */,
 				C94E06B81DCB6EC3008A0955 /* Info.plist */,
 				C9301B2E1DD2273D00C92A4A /* Stave.swift */,
+				C9ABC9241E08745F00FCF827 /* Keyboard.swift */,
 			);
 			path = "E-Z Notes";
 			sourceTree = "<group>";
@@ -173,6 +179,7 @@
 			files = (
 				C9301B311DD2294000C92A4A /* BarSprite.swift in Sources */,
 				C94E06AF1DCB6EC3008A0955 /* GameViewController.swift in Sources */,
+				C9ABC9251E08745F00FCF827 /* Keyboard.swift in Sources */,
 				C994CD141DDDF6D100118988 /* OctaveEnum.swift in Sources */,
 				C994CD121DDDF6C500118988 /* NoteEnum.swift in Sources */,
 				C9301B2F1DD2273D00C92A4A /* Stave.swift in Sources */,
@@ -181,6 +188,7 @@
 				C9EF561D1DEF9770004406CA /* Scale.swift in Sources */,
 				C994CD101DDB60A300118988 /* Note.swift in Sources */,
 				C9EF56191DEF6D6B004406CA /* SettingsViewController.swift in Sources */,
+				C9FCDDF91DFB51CE00CFC99C /* ScalePlayer.swift in Sources */,
 				C97EEF8E1DF4E8EC00DDF63F /* Lock.swift in Sources */,
 				C9EF561B1DEF83BB004406CA /* GlobalSpace.swift in Sources */,
 			);
