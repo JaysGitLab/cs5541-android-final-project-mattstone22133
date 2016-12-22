@@ -103,4 +103,26 @@ enum NoteEnum : Int{
         }
     }
     
+    static func getWhiteKeyNoteIndexStartAtC(rawValueStartC rawValue:Int) -> NoteEnum{
+        switch (rawValue % 7){
+        case 0:
+            return NoteEnum.C
+        case 1:
+            return NoteEnum.D
+        case 2:
+            return NoteEnum.E
+        case 3:
+            return NoteEnum.F
+        case 4:
+            return NoteEnum.G
+        case 5:
+            return NoteEnum.A
+        case 6:
+            return NoteEnum.B
+        default:
+            //this will never be triggered, but is required for swift. int % 7 values = 0 through 6
+            return NoteEnum.C
+        }
+        
+    }
 }

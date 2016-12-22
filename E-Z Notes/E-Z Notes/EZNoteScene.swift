@@ -23,6 +23,7 @@ class EZNoteScene: SKScene {
     var lock = Lock()
     var scalePlayer:ScalePlayer? = nil
     var keyboard:Keyboard? = nil
+    var chordHighlights:[SKSpriteNode]? = nil
     
     init(Framesize framesize:CGSize){
         //init fields before calling super.init(size:)
@@ -80,6 +81,9 @@ class EZNoteScene: SKScene {
         keyboard = Keyboard(frameSize: CGSize(width:frameSize.height, height: frameSize.width))
         keyboard!.position.x = frameSize.height / 2
         addChild(keyboard!)
+        
+        //create chord highlight objects
+        createChordHighlights()
         
         //Debug/test
         
@@ -149,6 +153,26 @@ class EZNoteScene: SKScene {
         }
         addChild(notes)
         setAllNotesShowLetters(showNotes: showNoteLetters)
+        
+    }
+    
+    func createChordHighlights(){
+        //create 5 highlights
+        chordHighlights = []
+        
+        //limit the creation to only 5 notes for highlight chords
+        for i in 0..<5 {
+            let octaveHighlight:SKSpriteNode = SKSpriteNode(imageNamed: "note_highlight_e-z-noteApp.png")
+            octaveHighlight.position = CGPoint(x:frameSize.width * 0.1, y: frameSize.height * 0.1 )
+            let highlightScaleFactor = calculateScaleFactor(MaxNoteSize: stave.noteSpacing * 2.5, CurrentNoteHeight: highlight.size.height)
+            octaveHighlight.setScale(highlightScaleFactor)
+            octaveHighlight.zPosition = 0.5
+            octaveHighlight.alpha = 0.0
+            
+            chordHighlights?.append(octaveHighlight)
+            self.addChild(octaveHighlight)
+        }
+        
         
     }
     
@@ -226,6 +250,31 @@ class EZNoteScene: SKScene {
             }
         }
         
+        //nil check on keyboard before attempting to test keys
+        pollKeyboard(touches: touches)
+        //        if let kb = keyboard {
+        //            var hlNumber = 0
+        //            for touch in touches {
+        //                //(xPosition, noteEnum, octaveEnum)
+        //                if let playInformation = kb.pollKeyTouched(touch: touch){
+        //
+        //                    //move highlight position to the note position (there is maximum of X chord highlight notes)
+        //                    if let hlCount = chordHighlights?.count {
+        //                        //if there are still remaining chord high lights to use
+        //                        if (hlNumber < hlCount && hlCount > 0){
+        //                            let currentHighlight = chordHighlights![hlNumber]
+        //                            currentHighlight.alpha = 1
+        //
+        //                            let fade = SKAction.fadeAlpha(to: 0.0, duration: 0.5)
+        //                            currentHighlight.run(fade)
+        //                        }
+        //                    }
+        //                    
+        //                    hlNumber += 1
+        //                }
+        //            }
+        //        }
+        
         
         //check if testScale button was pressed, but do nothing if there is a note being dragged
         if touchNotePairs.count <= 0
@@ -244,6 +293,35 @@ class EZNoteScene: SKScene {
         }
     }
 
+    func pollKeyboard(touches:Set<UITouch>){
+        //nil check on keyboard before attempting to test keys
+        if let kb = keyboard {
+            var hlNumber = 0
+            for touch in touches {
+                //(xPosition, noteEnum, octaveEnum)
+                if let playInformation = kb.pollKeyTouched(touch: touch){
+                    
+                    //move highlight position to the note position (there is maximum of X chord highlight notes)
+                    if let hlCount = chordHighlights?.count {
+                        
+                        //if there are still remaining chord high lights to use
+                        if (hlNumber < hlCount && hlCount > 0 && playInformation.1 != nil && playInformation.2 != nil ){
+                            let currentHighlight = chordHighlights![hlNumber]
+                            currentHighlight.alpha = 1
+                            
+                            currentHighlight.position = stave.getNotePosition(note: playInformation.1!, octave: playInformation.2!,
+                                                  ProduceSharps: false, stavePositionOffset: stave.position)
+                            currentHighlight.position.x = playInformation.0
+                            let fade = SKAction.fadeAlpha(to: 0.0, duration: 0.5)
+                            currentHighlight.run(fade)
+                        }
+                    }
+                    
+                    hlNumber += 1
+                }
+            }
+        }
+    }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         let touch = touches.first
