@@ -165,8 +165,8 @@ class EZNoteScene: SKScene {
         chordHighlights = []
         
         
-        //limit the creation to only 5 notes for highlight chords
-        for _ in 0..<5 {
+        //limit the creation to only 6 notes for highlight chords
+        for _ in 0..<6 {
             let octaveHighlight:SKSpriteNode = SKSpriteNode(imageNamed: "note_highlight_e-z-noteApp.png")
             octaveHighlight.position = CGPoint(x:frameSize.width * 0.1, y: frameSize.height * 0.1 )
             let highlightScaleFactor = calculateScaleFactor(MaxNoteSize: stave.noteSpacing * 2.5, CurrentNoteHeight: octaveHighlight.size.height)
@@ -328,7 +328,7 @@ class EZNoteScene: SKScene {
     //draws a highlight at the given note's position and the position of the noteEnum just below it.
     //this is useful when highlighting sharps/flats. Because these highlights use the location of
     //the white key associated with the flat version of the black key, this method will also highlight the 
-    //white key's location that is associated with the sharp version of the key. 
+    //white key's location that is associated with the sharp version of the key.
     func highlightDoubleNotePosition(keyInfo:(CGFloat, NoteEnum?, OctaveEnum?)?){
         if(keyInfo != nil && keyInfo?.1 != nil && keyInfo?.2 != nil){
             //show flat white letter location
@@ -423,17 +423,24 @@ class EZNoteScene: SKScene {
                         lastKeyPressed!.2 = keyInfo.2
                         
                         //highlight the note
-                        let currentHighlight = chordHighlights![nextChordIndex]
-                        nextChordIndex = (nextChordIndex + 1) % chordHighlights!.count
-                        
-                        currentHighlight.removeAllActions()
-                        currentHighlight.alpha = 1
-                        
-                        currentHighlight.position = stave.getNotePosition(note: keyInfo.1!, octave: keyInfo.2!,
-                                                                          ProduceSharps: false, stavePositionOffset: stave.position)
-                        currentHighlight.position.x = keyInfo.0
-                        let fade = SKAction.fadeAlpha(to: 0.0, duration: noteFadeTime)
-                        currentHighlight.run(fade)
+                        if keyInfo.1!.isFlatOrSharp(){
+                            //if flat/sharp, play both white key positions
+                            highlightDoubleNotePosition(keyInfo: keyInfo)
+                        } else {
+                            //is a white key, only play the white key's position
+                            highlightSingleNotePosition(keyInfo: keyInfo)
+                        }
+//                        let currentHighlight = chordHighlights![nextChordIndex]
+//                        nextChordIndex = (nextChordIndex + 1) % chordHighlights!.count
+//                        
+//                        currentHighlight.removeAllActions()
+//                        currentHighlight.alpha = 1
+//                        
+//                        currentHighlight.position = stave.getNotePosition(note: keyInfo.1!, octave: keyInfo.2!,
+//                                                                          ProduceSharps: false, stavePositionOffset: stave.position)
+//                        currentHighlight.position.x = keyInfo.0
+//                        let fade = SKAction.fadeAlpha(to: 0.0, duration: noteFadeTime)
+//                        currentHighlight.run(fade)
                     }
                 }
             }
