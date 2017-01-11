@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/EZNoteScene.swift"
-            timestampString = "504057080.662271"
+            timestampString = "505842702.565641"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "137"
-            endingLineNumber = "137"
+            startingLineNumber = "141"
+            endingLineNumber = "141"
             landmarkName = "createNotes()"
             landmarkType = "7">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/EZNoteScene.swift"
-            timestampString = "504059130.894237"
+            timestampString = "505849153.481541"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "227"
-            endingLineNumber = "227"
+            startingLineNumber = "231"
+            endingLineNumber = "231"
             landmarkName = "touchesBegan(_:with:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -122,11 +122,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/EZNoteScene.swift"
-            timestampString = "504063440.482992"
+            timestampString = "505870666.317126"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "424"
-            endingLineNumber = "424"
+            startingLineNumber = "494"
+            endingLineNumber = "494"
             landmarkName = "scalePlay()"
             landmarkType = "7">
             <Locations>
@@ -170,11 +170,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/EZNoteScene.swift"
-            timestampString = "504063440.482992"
+            timestampString = "505870666.317126"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "441"
-            endingLineNumber = "441"
+            startingLineNumber = "511"
+            endingLineNumber = "511"
             landmarkName = "scalePlay()"
             landmarkType = "7">
          </BreakpointContent>
@@ -186,11 +186,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/EZNoteScene.swift"
-            timestampString = "504063440.482992"
+            timestampString = "505870666.317126"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "635"
-            endingLineNumber = "635"
+            startingLineNumber = "705"
+            endingLineNumber = "705"
             landmarkName = "scaleHelperFindContextCorrectedOctave(CurrentTestNote:FirstScaleNote:CurrentScaleNote:StartOctave:isFirstMethodCall:direction:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -202,11 +202,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/EZNoteScene.swift"
-            timestampString = "504063440.482992"
+            timestampString = "505870666.317126"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "427"
-            endingLineNumber = "427"
+            startingLineNumber = "497"
+            endingLineNumber = "497"
             landmarkName = "scalePlay()"
             landmarkType = "7">
          </BreakpointContent>
@@ -218,11 +218,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/EZNoteScene.swift"
-            timestampString = "504060080.157566"
+            timestampString = "505850800.827509"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "281"
-            endingLineNumber = "281"
+            startingLineNumber = "263"
+            endingLineNumber = "263"
             landmarkName = "touchesBegan(_:with:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -234,11 +234,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/EZNoteScene.swift"
-            timestampString = "504060080.157566"
+            timestampString = "505850800.827509"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "288"
-            endingLineNumber = "288"
+            startingLineNumber = "270"
+            endingLineNumber = "270"
             landmarkName = "touchesBegan(_:with:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -250,11 +250,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/EZNoteScene.swift"
-            timestampString = "504063440.482992"
+            timestampString = "505870666.317126"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "638"
-            endingLineNumber = "638"
+            startingLineNumber = "708"
+            endingLineNumber = "708"
             landmarkName = "scaleHelperFindContextCorrectedOctave(CurrentTestNote:FirstScaleNote:CurrentScaleNote:StartOctave:isFirstMethodCall:direction:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -266,11 +266,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/EZNoteScene.swift"
-            timestampString = "504063440.482992"
+            timestampString = "505870666.317126"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "532"
-            endingLineNumber = "532"
+            startingLineNumber = "602"
+            endingLineNumber = "602"
             landmarkName = "scaleHelperPlayCorrectNote(_:_:_:_:_:_:_:_:_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -298,11 +298,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/EZNoteScene.swift"
-            timestampString = "504063440.482992"
+            timestampString = "505870666.317126"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "492"
-            endingLineNumber = "492"
+            startingLineNumber = "562"
+            endingLineNumber = "562"
             landmarkName = "scaleHelperPlayCorrectNote(_:_:_:_:_:_:_:_:_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -314,11 +314,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/EZNoteScene.swift"
-            timestampString = "504060080.157566"
+            timestampString = "505850800.827509"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "286"
-            endingLineNumber = "286"
+            startingLineNumber = "268"
+            endingLineNumber = "268"
             landmarkName = "touchesBegan(_:with:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -336,6 +336,38 @@
             startingLineNumber = "159"
             endingLineNumber = "159"
             landmarkName = "scaleHelperPlayCorrectNote(_:_:_:_:_:_:_:_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "E-Z Notes/EZNoteScene.swift"
+            timestampString = "505870666.317126"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "416"
+            endingLineNumber = "416"
+            landmarkName = "touchesMoved(_:with:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "E-Z Notes/EZNoteScene.swift"
+            timestampString = "505870666.317126"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "410"
+            endingLineNumber = "410"
+            landmarkName = "touchesMoved(_:with:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

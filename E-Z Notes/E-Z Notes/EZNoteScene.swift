@@ -24,6 +24,10 @@ class EZNoteScene: SKScene {
     var scalePlayer:ScalePlayer? = nil
     var keyboard:Keyboard? = nil
     var chordHighlights:[SKSpriteNode]? = nil
+    var nextChordIndex = 0
+    var noteFadeTime = 1.0
+    var lastKeyPressed:(CGFloat, NoteEnum?, OctaveEnum?)? = nil
+    
     
     init(Framesize framesize:CGSize){
         //init fields before calling super.init(size:)
@@ -160,11 +164,12 @@ class EZNoteScene: SKScene {
         //create 5 highlights
         chordHighlights = []
         
+        
         //limit the creation to only 5 notes for highlight chords
-        for i in 0..<5 {
+        for _ in 0..<5 {
             let octaveHighlight:SKSpriteNode = SKSpriteNode(imageNamed: "note_highlight_e-z-noteApp.png")
             octaveHighlight.position = CGPoint(x:frameSize.width * 0.1, y: frameSize.height * 0.1 )
-            let highlightScaleFactor = calculateScaleFactor(MaxNoteSize: stave.noteSpacing * 2.5, CurrentNoteHeight: highlight.size.height)
+            let highlightScaleFactor = calculateScaleFactor(MaxNoteSize: stave.noteSpacing * 2.5, CurrentNoteHeight: octaveHighlight.size.height)
             octaveHighlight.setScale(highlightScaleFactor)
             octaveHighlight.zPosition = 0.5
             octaveHighlight.alpha = 0.0
@@ -172,9 +177,8 @@ class EZNoteScene: SKScene {
             chordHighlights?.append(octaveHighlight)
             self.addChild(octaveHighlight)
         }
-        
-        
     }
+    
     
     func calculateScaleFactor(MaxNoteSize maxSize:CGFloat, CurrentNoteHeight noteHeight:CGFloat) -> CGFloat{
         let floatCompareThreshold:CGFloat = 0.1
@@ -228,7 +232,7 @@ class EZNoteScene: SKScene {
         //loop through notes and see which note was touched
         for noteNode in notes.children {
             //Cast note:SKNode to a sprite node
-            let note = noteNode as! Note //WARNING: if we decide to switch custom class, we will need to change cast
+            let note = noteNode as! Note
             
             //get position of current note
             let notesPosition = note.position
@@ -250,32 +254,10 @@ class EZNoteScene: SKScene {
             }
         }
         
-        //nil check on keyboard before attempting to test keys
         pollKeyboard(touches: touches)
-        //        if let kb = keyboard {
-        //            var hlNumber = 0
-        //            for touch in touches {
-        //                //(xPosition, noteEnum, octaveEnum)
-        //                if let playInformation = kb.pollKeyTouched(touch: touch){
-        //
-        //                    //move highlight position to the note position (there is maximum of X chord highlight notes)
-        //                    if let hlCount = chordHighlights?.count {
-        //                        //if there are still remaining chord high lights to use
-        //                        if (hlNumber < hlCount && hlCount > 0){
-        //                            let currentHighlight = chordHighlights![hlNumber]
-        //                            currentHighlight.alpha = 1
-        //
-        //                            let fade = SKAction.fadeAlpha(to: 0.0, duration: 0.5)
-        //                            currentHighlight.run(fade)
-        //                        }
-        //                    }
-        //                    
-        //                    hlNumber += 1
-        //                }
-        //            }
-        //        }
+        pollKeyboardOctaveButtons(touches: touches)
         
-        
+
         //check if testScale button was pressed, but do nothing if there is a note being dragged
         if touchNotePairs.count <= 0
             && positionsAreSameWithinThreshold(scaleButton.position,
@@ -306,18 +288,73 @@ class EZNoteScene: SKScene {
                         
                         //if there are still remaining chord high lights to use
                         if (hlNumber < hlCount && hlCount > 0 && playInformation.1 != nil && playInformation.2 != nil ){
-                            let currentHighlight = chordHighlights![hlNumber]
-                            currentHighlight.alpha = 1
                             
-                            currentHighlight.position = stave.getNotePosition(note: playInformation.1!, octave: playInformation.2!,
-                                                  ProduceSharps: false, stavePositionOffset: stave.position)
-                            currentHighlight.position.x = playInformation.0
-                            let fade = SKAction.fadeAlpha(to: 0.0, duration: 0.5)
-                            currentHighlight.run(fade)
+                            if playInformation.1!.isFlatOrSharp(){
+                                //if flat/sharp, play both white key positions
+                                highlightDoubleNotePosition(keyInfo: playInformation)
+                            } else {
+                                //is a white key, only play the white key's position
+                                highlightSingleNotePosition(keyInfo: playInformation)
+                            }
+                            
                         }
                     }
                     
                     hlNumber += 1
+                }
+            }
+        }
+    }
+    
+    func highlightSingleNotePosition(keyInfo:(CGFloat, NoteEnum?, OctaveEnum?)? ){
+        if(keyInfo != nil && keyInfo?.1 != nil && keyInfo?.2 != nil){
+            lastKeyPressed = keyInfo
+            
+            let currentHighlight = chordHighlights![nextChordIndex]
+            nextChordIndex = (nextChordIndex + 1) % chordHighlights!.count
+            
+            currentHighlight.removeAllActions()
+            currentHighlight.alpha = 1
+            
+            currentHighlight.position = stave.getNotePosition(note: keyInfo!.1!, octave: keyInfo!.2!,
+                                                              ProduceSharps: false, stavePositionOffset: stave.position)
+            currentHighlight.position.x = keyInfo!.0
+            let fade = SKAction.fadeAlpha(to: 0.0, duration: noteFadeTime)
+            currentHighlight.run(fade)
+        }
+
+    }
+    
+    //draws a highlight at the given note's position and the position of the noteEnum just below it.
+    //this is useful when highlighting sharps/flats. Because these highlights use the location of
+    //the white key associated with the flat version of the black key, this method will also highlight the 
+    //white key's location that is associated with the sharp version of the key. 
+    func highlightDoubleNotePosition(keyInfo:(CGFloat, NoteEnum?, OctaveEnum?)?){
+        if(keyInfo != nil && keyInfo?.1 != nil && keyInfo?.2 != nil){
+            //show flat white letter location
+            highlightSingleNotePosition(keyInfo: keyInfo)
+            
+            //modify the the keyInfo so it plays the white key associated w/ the sharp
+            var sharpVersion = keyInfo!
+            
+            //code note1: (x + NoteEnum.count) % NoteEnum.count turns -1 into (NoteEnum.count - 1)
+            //code note2: Subtracting 1 from the rawValue gives us the value just below the current enum
+            // this value below will be the white key that we need to show the location.
+            sharpVersion.1 = NoteEnum(rawValue: (sharpVersion.1!.rawValue - 1 + NoteEnum.count) % NoteEnum.count)
+            
+            //show sharp white letter location
+            highlightSingleNotePosition(keyInfo: sharpVersion)
+        }
+    }
+    
+    func pollKeyboardOctaveButtons(touches:Set<UITouch>){
+        //nil check for keyboard
+        if let kb = keyboard {
+            //for every touch that has occured
+            for touch in touches{
+                //return as soon as a button hit was detected (prevents handling multiple buttons pressed, which may have bugs)
+                if kb.pollOctaveButtonPressedAndHandle(touch: touch){
+                    return
                 }
             }
         }
@@ -360,9 +397,45 @@ class EZNoteScene: SKScene {
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        //test if touch is on a draggable note
         for touch in touches{
             if let note = touchNotePairs[touch] {
                 note.position = touch.location(in: notes)
+            }
+        }
+        
+        //test if touch was dragged to a new keyboard key
+        for touch in touches{
+            if let kb = keyboard{
+                //nil check on keyboard and last note
+                if let keyInfo = kb.pollDifferentKeyTouched(touch: touch), let prev = lastKeyPressed{
+                    
+                    
+                    if !keyInfo.0.isEqual(to: prev.0)
+                        && keyInfo.1 != prev.1
+                        || keyInfo.2 != prev.2
+                    {
+                        //last note played was different, play this note.
+                        
+                        //update previous note (last key pressed cannot be nil if prev is not nil)
+                        lastKeyPressed!.0 = keyInfo.0
+                        lastKeyPressed!.1 = keyInfo.1
+                        lastKeyPressed!.2 = keyInfo.2
+                        
+                        //highlight the note
+                        let currentHighlight = chordHighlights![nextChordIndex]
+                        nextChordIndex = (nextChordIndex + 1) % chordHighlights!.count
+                        
+                        currentHighlight.removeAllActions()
+                        currentHighlight.alpha = 1
+                        
+                        currentHighlight.position = stave.getNotePosition(note: keyInfo.1!, octave: keyInfo.2!,
+                                                                          ProduceSharps: false, stavePositionOffset: stave.position)
+                        currentHighlight.position.x = keyInfo.0
+                        let fade = SKAction.fadeAlpha(to: 0.0, duration: noteFadeTime)
+                        currentHighlight.run(fade)
+                    }
+                }
             }
         }
     }

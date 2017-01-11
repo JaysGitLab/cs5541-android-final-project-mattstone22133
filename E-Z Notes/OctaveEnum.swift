@@ -21,6 +21,10 @@ enum OctaveEnum : Int {
     case five
     case invalid
     
+    //below are used in calculating an octave shift for keyboard. octaves above min+3 are invalid, octaves below raw:0 are invalid
+    static let minValidOct = 0;
+    static let maxValidOct = minValidOct + 3
+    
     static var startingNumber:Int {
         // C -> D -> E (off by 2)
         return 2
@@ -69,6 +73,24 @@ enum OctaveEnum : Int {
             return "5"
         default:
             return "INVALID_OCTAVE"
+        }
+    }
+    
+    func attemptGetLower() -> OctaveEnum{
+        let new = self.rawValue - 1
+        if(new >= OctaveEnum.minValidOct){
+            return OctaveEnum(rawValue: new)!
+        } else {
+            return self
+        }
+    }
+    
+    func attemptGetHigher() -> OctaveEnum{
+        let new = self.rawValue + 1
+        if(new <= OctaveEnum.maxValidOct){
+            return OctaveEnum(rawValue: new)!
+        } else {
+            return self
         }
     }
 }
