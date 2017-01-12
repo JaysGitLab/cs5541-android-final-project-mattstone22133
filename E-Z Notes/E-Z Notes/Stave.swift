@@ -416,6 +416,13 @@ class Stave: SKNode {
         return normalNoteTable(psuedoNote: PseudoNote(rawValue: whiteKeyConvert.rawValue + 1 % PseudoNote.count)!)
     }
 
-
+    
+    func getTrebleClefSize() -> CGSize {
+        return CGSize(width: trebleClef.size.width, height: trebleClef.size.height)
+    }
+    
+    func getTrebleClefPosition() -> CGPoint {
+        return CGPoint(x: trebleClef.position.x + self.position.x, y: trebleClef.position.y + self.position.y)
+    }
     
 }

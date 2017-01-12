@@ -21,6 +21,7 @@ class EZNoteScene: SKScene {
     let highlight:SKSpriteNode = SKSpriteNode(imageNamed: "note_highlight_e-z-noteApp.png")
     var playingScale:Bool = false
     var lock = Lock()
+    var keyboardButton:KeyboardButton = KeyboardButton(imageNamed: "KeyBoardButton192x58.png")
     var scalePlayer:ScalePlayer? = nil
     var keyboard:Keyboard? = nil
     var chordHighlights:[SKSpriteNode]? = nil
@@ -84,10 +85,14 @@ class EZNoteScene: SKScene {
         //set up the visual piano keyboard
         keyboard = Keyboard(frameSize: CGSize(width:frameSize.height, height: frameSize.width))
         keyboard!.position.x = frameSize.height / 2
+        keyboard!.position.y -= keyboard!.getHeight()    //position keyboard below screen, to be moved by button
         addChild(keyboard!)
         
         //create chord highlight objects
         createChordHighlights()
+        
+        //set up the keyboard button
+        setUpKeyboardButton()
         
         //Debug/test
         
@@ -161,7 +166,7 @@ class EZNoteScene: SKScene {
     }
     
     func createChordHighlights(){
-        //create 5 highlights
+        //create 6 highlights
         chordHighlights = []
         
         
@@ -200,6 +205,41 @@ class EZNoteScene: SKScene {
             note.updateNote(NotesUpdatedPoint:note.position, StavePositionInView: stave.position, Stave: stave)
         }
 
+    }
+    
+    //invariant: note must have been set up and scaled properly.
+    func setUpKeyboardButton(){
+        //scale the button (scaled using a notes size size that should have be set up to be screen size independent
+        let scaleFactor =  (notes.children as! [SKSpriteNode])[0].size.height / keyboardButton.size.height
+        keyboardButton.yScale = scaleFactor
+        keyboardButton.xScale = scaleFactor
+        
+        positionKeyboardButtonAtBottom()
+        
+        //add the button as a child so it will draw
+        addChild(keyboardButton)
+    }
+    
+    func positionKeyboardButtonAtBottom(){
+        //position it at bottom center of the screen
+        keyboardButton.position.y = 0 + keyboardButton.size.height / 2 //added zero for readability later
+        keyboardButton.position.x = (frameSize.height / 2)// - (keyboardButton.size.width / 2)    //TODO - swap frameSize height/width
+        
+    }
+    
+    func positionKeyboardButtonAtTop(){
+        //TODO - swap frameSize height/width
+        //        keyboardButton.position.y = frameSize.width - keyboardButton.size.height / 2 //added zero for readability later
+        keyboardButton.position.y = (lock.position.y - lock.getScaledSize().height / 2)// + keyboardButton.size.height / 2
+        //keyboardButton.position.y -= lock.getScaledSize().height * 0.333
+        //get distance between lock and treble clef
+        //let dist = abs(stave.getTrebleClefPosition().x - lock.position.x)
+        
+        //let newX = stave.getTrebleClefPosition().x //+ dist + keyboardButton.size.width / 2
+        let newX = frameSize.height * 0.25
+        keyboardButton.position.x = newX
+        
+        //        keyboardButton.position.x = (frameSize.height / 2)// - (keyboardButton.size.width / 2)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -254,8 +294,12 @@ class EZNoteScene: SKScene {
             }
         }
         
-        pollKeyboard(touches: touches)
-        pollKeyboardOctaveButtons(touches: touches)
+        //poll only if the keyboard is active
+        if(keyboardButton.toggle){
+            pollKeyboard(touches: touches)
+            pollKeyboardOctaveButtons(touches: touches)
+        }
+        pollKeyBoardButtonPressed(touches: touches)
         
 
         //check if testScale button was pressed, but do nothing if there is a note being dragged
@@ -273,6 +317,29 @@ class EZNoteScene: SKScene {
         if positionsAreSameWithinThreshold(lock.position, touch!.location(in: self), lock.getScaledSize()){
             lock.toggle()
         }
+    }
+    
+    //invariant1: keyboard has been initialized
+    func pollKeyBoardButtonPressed(touches:Set<UITouch>){
+        for touch in touches{
+            if keyboardButton.touched(point: touch.location(in: self)){
+                if keyboardButton.toggle {
+                    //keyboard is turned on, do sets to inactivate it (hide it)
+                    keyboard!.position.y -= keyboard!.getHeight()
+                    keyboardButton.changeState()
+                    positionKeyboardButtonAtBottom()
+                    
+                } else {
+                    //keyboard is currently off, do steps to make it active
+                    keyboard!.position.y += keyboard!.getHeight()
+                    keyboardButton.changeState()
+                    positionKeyboardButtonAtTop()
+                }
+                
+                return
+            }
+        }
+
     }
 
     func pollKeyboard(touches:Set<UITouch>){

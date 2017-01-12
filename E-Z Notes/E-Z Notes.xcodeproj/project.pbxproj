@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C91AAEB31E270759007BFACA /* KeyboardButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91AAEB21E270759007BFACA /* KeyboardButton.swift */; };
 		C9301B2F1DD2273D00C92A4A /* Stave.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9301B2E1DD2273D00C92A4A /* Stave.swift */; };
 		C9301B311DD2294000C92A4A /* BarSprite.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9301B301DD2294000C92A4A /* BarSprite.swift */; };
 		C94E06A71DCB6EC3008A0955 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94E06A61DCB6EC3008A0955 /* AppDelegate.swift */; };
@@ -29,6 +30,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C91AAEB21E270759007BFACA /* KeyboardButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardButton.swift; sourceTree = "<group>"; };
 		C9301B2E1DD2273D00C92A4A /* Stave.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stave.swift; sourceTree = "<group>"; };
 		C9301B301DD2294000C92A4A /* BarSprite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BarSprite.swift; path = ../BarSprite.swift; sourceTree = "<group>"; };
 		C94E06A31DCB6EC3008A0955 /* E-Z Notes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "E-Z Notes.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,6 +104,7 @@
 				C94E06B81DCB6EC3008A0955 /* Info.plist */,
 				C9301B2E1DD2273D00C92A4A /* Stave.swift */,
 				C9ABC9241E08745F00FCF827 /* Keyboard.swift */,
+				C91AAEB21E270759007BFACA /* KeyboardButton.swift */,
 			);
 			path = "E-Z Notes";
 			sourceTree = "<group>";
@@ -192,6 +195,7 @@
 				C9EF561D1DEF9770004406CA /* Scale.swift in Sources */,
 				C994CD101DDB60A300118988 /* Note.swift in Sources */,
 				C9EF56191DEF6D6B004406CA /* SettingsViewController.swift in Sources */,
+				C91AAEB31E270759007BFACA /* KeyboardButton.swift in Sources */,
 				C9FCDDF91DFB51CE00CFC99C /* ScalePlayer.swift in Sources */,
 				C97EEF8E1DF4E8EC00DDF63F /* Lock.swift in Sources */,
 				C9EF561B1DEF83BB004406CA /* GlobalSpace.swift in Sources */,

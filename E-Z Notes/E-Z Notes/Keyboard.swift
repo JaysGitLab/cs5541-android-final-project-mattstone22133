@@ -442,4 +442,8 @@ class Keyboard: SKNode {
         let fadeTo100 = SKAction.fadeAlpha(to: 1.0, duration: 0.5)
         sprite.run(fadeTo100)
     }
+    
+    func getHeight() -> CGFloat{
+        return (whiteKeys.children as! [SKSpriteNode])[0].size.height
+    }
 }
