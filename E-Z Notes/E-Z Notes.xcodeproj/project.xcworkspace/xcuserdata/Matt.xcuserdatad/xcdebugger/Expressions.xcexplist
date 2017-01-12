@@ -23,6 +23,9 @@
          contextName = "EZNoteScene.touchesBegan(Set&lt;UITouch&gt;, with : UIEvent?) -&gt; ():EZNoteScene.swift">
       </ContextState>
       <ContextState
+         contextName = "Note.positionSubSprites() -&gt; ():Note.swift">
+      </ContextState>
+      <ContextState
          contextName = "Scale.useStepsToGenerateNotes(Steps : [Scale.Tone], Start : NoteEnum) -&gt; ():Scale.swift">
       </ContextState>
       <ContextState
@@ -32,9 +35,6 @@
                value = "self.frameSize.height * CGFloat(i) * (equalSpacing)">
             </PersistentString>
          </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "Note.positionSubSprites() -&gt; ():Note.swift">
       </ContextState>
       <ContextState
          contextName = "KeyboardTouchableKey.playNote() -&gt; ():KeyboardTouchableKey.swift">
@@ -55,6 +55,14 @@
       </ContextState>
       <ContextState
          contextName = "Keyboard.pollKeyTouched(touch : UITouch) -&gt; ():Keyboard.swift">
+      </ContextState>
+      <ContextState
+         contextName = "Note.noteInCPositionButSharpOrFlat() -&gt; Bool:Note.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "Note.noteForCalc.representsNote">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "Keyboard.pollKeyTouched(touch : UITouch) -&gt; (CGFloat, NoteEnum?, OctaveEnum?)?:Keyboard.swift">

@@ -90,11 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Note.swift"
-            timestampString = "502820487.942469"
+            timestampString = "505933150.743039"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "171"
-            endingLineNumber = "171"
+            startingLineNumber = "223"
+            endingLineNumber = "223"
             landmarkName = "scaleSubSpriteToFitInNote(Sprite:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -368,6 +368,22 @@
             startingLineNumber = "480"
             endingLineNumber = "480"
             landmarkName = "touchesMoved(_:with:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Note.swift"
+            timestampString = "505933150.743039"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "162"
+            endingLineNumber = "162"
+            landmarkName = "noteInCPositionButSharpOrFlat()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

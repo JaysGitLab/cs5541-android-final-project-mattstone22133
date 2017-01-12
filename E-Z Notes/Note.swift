@@ -26,11 +26,15 @@ class Note: SKSpriteNode {
     static let threeTexture = SKTexture(imageNamed: "3.png")
     static let fourTexture = SKTexture(imageNamed: "4.png")
     static let fiveTexture = SKTexture(imageNamed: "5.png")
+    static let barTexture = SKTexture(imageNamed: "ez_bar_2x100.png")
     
     //children nodes
     var noteLabelSprite = SKSpriteNode(texture: eTexture)
     var noteOctaveSprite = SKSpriteNode(texture: twoTexture)
     
+    //middleC calcultion variables
+    var middleCBar = SKSpriteNode(texture: barTexture)
+    static var noteForCalc:Note = Note() //static so there only ever exists 1 instance
     
     //fields/properties
     var normal:Bool = true
@@ -44,8 +48,10 @@ class Note: SKSpriteNode {
     
     init(imageNamed:String){ //TODO instead of adding noteLabel on every updateNote call, do it here.
         super.init(texture: Note.blackTexture, color: SKColor.clear, size: Note.blackTexture.size())
+        setUpMiddleCBar()
         addChild(noteLabelSprite)
         addChild(noteOctaveSprite)
+        addChild(middleCBar)
         setUpLabels()
     }
     
@@ -60,8 +66,11 @@ class Note: SKSpriteNode {
     
     init(){
         super.init(texture: Note.blackTexture, color: SKColor.clear, size: Note.blackTexture.size())
+        setUpMiddleCBar()
+        
         addChild(noteLabelSprite)
         addChild(noteOctaveSprite)
+        addChild(middleCBar)
         setUpLabels()
     }
     
@@ -86,13 +95,25 @@ class Note: SKSpriteNode {
             self.representsOctave = OctaveEnum(rawValue: noteToCopy.representsOctave!.rawValue)
         }
 
+        setUpMiddleCBar()
+        
         addChild(noteLabelSprite)
         addChild(noteOctaveSprite)
+        addChild(middleCBar)
         setUpLabels()
     }
     
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    func setUpMiddleCBar(){
+        //scale width of bar (match note's witdh, then multiple by afactor to make it predictably larger than note size)
+        let scaleFactorX = (self.size.width / middleCBar.size.width) * 1.75
+        middleCBar.xScale = scaleFactorX
+        middleCBar.zPosition = self.zPosition - 0.5
+        middleCBar.isHidden = true
     }
     
     func updateNote(NotesUpdatedPoint futurePnt:CGPoint, StavePositionInView stavePos: CGPoint, Stave stave:Stave){
@@ -113,6 +134,36 @@ class Note: SKSpriteNode {
                 hideSubSprites()
             }
         }
+        
+        //middle C check
+        enableOrDisableMiddleCBar()
+    }
+    
+    func enableOrDisableMiddleCBar(){
+        if let repNote = representsNote, let oct = representsOctave{
+            if(repNote == NoteEnum.C && oct == OctaveEnum.four){
+                middleCBar.isHidden = false
+            }
+            else if (noteInCPositionButSharpOrFlat()){
+                middleCBar.isHidden = false
+            }else {
+                middleCBar.isHidden = true
+            }
+        }
+    }
+    
+    func noteInCPositionButSharpOrFlat() -> Bool{
+        if let stave = GlobalSpace.ezscene?.stave{
+            //copy this not in to the static field note that is used for calculations
+            Note.noteForCalc.position = self.position
+            
+            //this will calculate only white keys with an octave value (ie sharps/flats are converted to white based on position)
+            stave.findNoteValueAndOctave(note: Note.noteForCalc, futureNotePosition: Note.noteForCalc.position, StavePosition: stave.position)
+            if let repNote = Note.noteForCalc.representsNote, let oct = Note.noteForCalc.representsOctave{
+                return (repNote == NoteEnum.C && oct == OctaveEnum.four)
+            }
+        }
+        return false
     }
     
     func setOctaveNumberText(){
