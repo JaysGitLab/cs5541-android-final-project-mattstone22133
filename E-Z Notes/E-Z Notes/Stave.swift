@@ -113,6 +113,9 @@ class Stave: SKNode {
         return ret
     }
     
+    //Finds the note's value and octave, but in terms of WHITE KEYS.
+    //@SIDE_EFFECT WARNING: changes notes internal structure
+    //
     //The note's position is not used, becuase it is likely being animated to a new position.
     //Instead, use the paramter futureNotePosition provided - this is expected to be the result of a notes animation
     //

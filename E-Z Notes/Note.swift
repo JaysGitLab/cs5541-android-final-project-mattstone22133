@@ -314,4 +314,44 @@ class Note: SKSpriteNode {
         representsOctave = nil
         hideSubSprites()
     }
+    
+    func lowerByOneSemitone(){
+        //correct octave is note is C and goes down to B (the octave should also drop in this situation)
+        if let octave = representsOctave{
+            if let note = representsNote{
+                if note == NoteEnum.C {
+                    representsOctave = octave.attemptGetLower()
+                }
+            }
+        }
+        
+        //lower the tone
+        if let note = representsNote {
+            //code note: (x - 1 + count) % count turns -1 into NoteEnum.count - 1
+            representsNote = NoteEnum(rawValue: (note.rawValue - 1 + NoteEnum.count) % NoteEnum.count)
+            
+            //update the correct image
+            if self.texture == Note.redTexture {
+                self.texture = Note.blackTexture
+                self.sharp = false
+                self.flat = false
+                self.normal = true
+            } else if self.texture == Note.blackTexture {
+                self.texture = Note.blueTexture
+                self.sharp = false
+                self.flat = true
+                self.normal = false
+            } else if self.texture == Note.blueTexture {
+                //Do Nothing
+                
+                //untested portion below - may be invalid
+                //if note.isFlatOrSharp() {
+                //    self.texture = Note.redTexture
+                //} else {
+                //    self.texture = Note.blackTexture
+                //}
+                
+            }
+        }
+    }
 }

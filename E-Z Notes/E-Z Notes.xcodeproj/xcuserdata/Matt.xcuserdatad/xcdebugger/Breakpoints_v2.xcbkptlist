@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/Stave.swift"
-            timestampString = "502127081.58537"
+            timestampString = "505966381.008555"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "130"
-            endingLineNumber = "130"
+            startingLineNumber = "133"
+            endingLineNumber = "133"
             landmarkName = "findNoteValueAndOctave(note:futureNotePosition:StavePosition:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/Stave.swift"
-            timestampString = "502127081.58537"
+            timestampString = "505966381.008555"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "146"
-            endingLineNumber = "146"
+            startingLineNumber = "149"
+            endingLineNumber = "149"
             landmarkName = "findNoteValueAndOctave(note:futureNotePosition:StavePosition:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "E-Z Notes/Stave.swift"
-            timestampString = "502424321.821539"
+            timestampString = "505966381.008555"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "341"
-            endingLineNumber = "341"
+            startingLineNumber = "344"
+            endingLineNumber = "344"
             landmarkName = "getNotePosition(note:octave:stavePositionOffset:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -90,11 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Note.swift"
-            timestampString = "505933150.743039"
+            timestampString = "505934300.158433"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "223"
-            endingLineNumber = "223"
+            startingLineNumber = "222"
+            endingLineNumber = "222"
             landmarkName = "scaleSubSpriteToFitInNote(Sprite:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -329,22 +329,6 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalePlayer.swift"
-            timestampString = "503870035.717765"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "159"
-            endingLineNumber = "159"
-            landmarkName = "scaleHelperPlayCorrectNote(_:_:_:_:_:_:_:_:_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "E-Z Notes/EZNoteScene.swift"
             timestampString = "505879123.604033"
             startingColumnNumber = "9223372036854775807"
@@ -378,12 +362,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Note.swift"
-            timestampString = "505933150.743039"
+            timestampString = "505934300.158433"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "162"
-            endingLineNumber = "162"
+            startingLineNumber = "161"
+            endingLineNumber = "161"
             landmarkName = "noteInCPositionButSharpOrFlat()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalePlayer.swift"
+            timestampString = "505966609.240488"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "296"
+            endingLineNumber = "296"
+            landmarkName = "playCurrentNote()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -5,6 +5,8 @@
 //  Created by Matt Stone on 12/9/16.
 //  Copyright © 2016 Matt Stone. All rights reserved.
 //
+// TODO: remove old deprecated functions or functions that or not longer used
+//
 
 import Foundation
 import SpriteKit
@@ -24,6 +26,33 @@ class ScalePlayer {
     //setting variables (delay timings)
     let moveToPlayerNoteDelay = 0.1
     let playNoteDelay = 0.1
+    
+    //playScale function shared fields (there are some default values initilized that will be changed with algorithm)
+    var isFirstNote:Bool = false
+    var scaleNoteArray:[NoteEnum]?
+    var sortedNotes:[SKNode] = []
+    var playersOctave:OctaveEnum? = nil
+    var playersFirstNote:NoteEnum? = nil
+    var currPlayerNoteObj:Note? = nil
+    var correctedOctaveForNote:OctaveEnum? = nil
+    var currentPlayerNoteEnum:NoteEnum?
+    var currentScaleNoteEnum:NoteEnum?
+    var hasLastNotePlayed:Bool = false
+    var mockNoteLast:Note = Note()
+    var mockNoteCurr:Note = Note()
+    
+    //same-line-note special check variables
+    var specialCorrectionFlagForSameLineNotes = false
+    var whiteNoteEnum:NoteEnum? = nil
+    var whiteOctaveEnum:OctaveEnum? = nil
+
+
+    
+    //scale play correct note variables
+    //var playersFirstOctave:OctaveEnum?
+    //var isFirstMethodCall:Bool?
+    //var scaleDirection: Scale.Direction?
+    //var targetScale: Scale
 
 
     
@@ -52,7 +81,7 @@ class ScalePlayer {
         self.touchNotePairs = touchNotePairs
         self.stave = stave
         lastNotePoint = nil
-        scalePlay()
+        scalePlayInNewThread()
         
     }
     
@@ -60,51 +89,13 @@ class ScalePlayer {
         lastNotePoint = nil
     }
     
-    private func scalePlay(){
+    private func scalePlayInNewThread(){
         //Check if closure is already being executed, return from function call if already processing scale
         if playingScale { return }
-        var isFirstNote = true
+        playingScale = true
         
         //since this logic requires delays, it is be played in another thread to prevent freezing application
-        let closure = {
-            //1. NIL CHECK for SCALE
-            if let scaleNoteArray = self.targetScale?.getNotes(){
-                
-                //2. SORT PLAYER NOTES; user reorganized notes - lowest note at x isn't lowest in container
-                var sortedNotes:[SKNode] = self.notes.children.sorted(by: self.sortNodesByXReverse)
-                let playersOctave:OctaveEnum? = self.scaleHelperFindPlayersFirstOctaveValue(array: sortedNotes as! [Note])
-                let playersFirstNote:NoteEnum? = self.scaleHelperFindPlayersFirstNoteValue(array: sortedNotes as! [Note])
-                if playersOctave == nil || playersFirstNote == nil {
-                    return
-                }
-                self.playingScale = true
-                
-                //3. LOOP THROUGH SCALE
-                for currentScaleNoteEnum:NoteEnum in scaleNoteArray{
-                    //A. RESORT; resort the notes incase the player moved rearranged a note while playing scale
-                    sortedNotes.sort(by: self.sortNodesByXReverse)
-                    
-                    //B. PLAY VALID NOTES
-                    if let currentPlayerNoteEnum = (sortedNotes[sortedNotes.count - 1] as? Note)?.representsNote {
-                        let currPlayerNoteObj = sortedNotes[sortedNotes.count - 1] as! Note
-                        
-                        //highlight note (delay) list is reverse sorted to make removing O(1)
-                        self.scaleHelperHighlightNote(Note: currPlayerNoteObj)
-                        
-                        //playCorrectNote
-                        self.scaleHelperPlayCorrectNote(scaleNoteArray, currentPlayerNoteEnum, currentScaleNoteEnum,
-                                                        playersOctave!, playersFirstNote!, currPlayerNoteObj,
-                                                        isFirstNote, Scale.Direction.Ascending, self.targetScale!)
-                    }
-                    //REMOVE CURRENT PLAYER NOTE - remove note from sortedNotes (reverse sorted, so removes from end)
-                    sortedNotes.remove(at: sortedNotes.count - 1)
-                    isFirstNote = false
-                }
-            }
-            //4. CLEAN UP - high highlighter, and change playingScale state to false
-            self.highlight.isHidden = true
-            self.playingScale = false
-        }
+        let closure = scalePlay
         
         //get a queue to pass closure (priorty method was deprecated iOS 8.0 and this is the new way to do it)
         let queue = DispatchQueue.global(qos: DispatchQoS.QoSClass.default)
@@ -113,7 +104,67 @@ class ScalePlayer {
         queue.async(execute: closure)
     }
     
-    func scaleHelperHighlightNote(Note note:Note){
+    //WARNING this method should be called in a new thread to prevent freezing the app until the scale playing is over
+    private func scalePlay(){
+        //flag for the first note
+        isFirstNote = true
+        
+        //1. NIL CHECK for SCALE
+        if (self.targetScale?.getNotes() != nil){
+            scaleNoteArray = self.targetScale?.getNotes()
+            //2. SORT PLAYER NOTES; user reorganized notes - lowest note at x isn't lowest in container
+            sortedNotes = self.notes.children.sorted(by: self.sortNodesByXReverse)
+            
+            //3. FIND START AND VALIDATE: find starting octave and note and make sure they are valid
+            playersOctave = self.scaleHelperFindPlayersFirstOctaveValue(array: sortedNotes as! [Note])
+            playersFirstNote = self.scaleHelperFindPlayersFirstNoteValue(array: sortedNotes as! [Note])
+            if playersOctave == nil || playersFirstNote == nil {
+                playingScale = false
+                return
+            }
+            
+            //4. LOOP THROUGH SCALE
+            for currentScaleNoteEnum:NoteEnum in scaleNoteArray!{
+                self.currentScaleNoteEnum = currentScaleNoteEnum
+                
+                //A. RESORT; resort the notes incase the player moved rearranged a note while playing scale
+                sortedNotes.sort(by: sortNodesByXReverse)
+                
+                //B. PLAY VALID NOTES
+                //if let currentPlayerNoteEnum = (sortedNotes[sortedNotes.count - 1] as? Note)?.representsNote {
+                currentPlayerNoteEnum = (sortedNotes[sortedNotes.count - 1] as? Note)?.representsNote
+                if (currentPlayerNoteEnum != nil){
+                    currPlayerNoteObj = (sortedNotes[sortedNotes.count - 1] as! Note)
+                    
+                    //highlight note (delay) list is reverse sorted to make removing O(1)
+                    highlightNote(Note: currPlayerNoteObj!)
+                
+                    playCorrectNote()
+                }
+                //REMOVE CURRENT PLAYER NOTE - remove note from sortedNotes (reverse sorted, so removes from end)
+                sortedNotes.remove(at: sortedNotes.count - 1)
+                isFirstNote = false
+            }
+        }
+        //5. CLEAN UP - high highlighter, and change playingScale state to false
+        highlight.isHidden = true
+        playingScale = false
+        resetFields()
+    }
+
+    func resetFields(){
+         isFirstNote = false
+         sortedNotes = []
+         playersOctave = nil
+         playersFirstNote = nil
+         currPlayerNoteObj = nil
+         correctedOctaveForNote = nil
+         hasLastNotePlayed = false
+         whiteNoteEnum = nil
+         whiteOctaveEnum = nil
+    }
+    
+    func highlightNote(Note note:Note){
         //let moveToPlayerNoteDelay = 0.5       //this was converted to a property(field) for changing in settingss
         let moveToPlayerNote = SKAction.move(to: note.position, duration: moveToPlayerNoteDelay)
         self.highlight.run(moveToPlayerNote)
@@ -121,113 +172,214 @@ class ScalePlayer {
         Thread.sleep(forTimeInterval: moveToPlayerNoteDelay + 0.1)    //sleep for x seconds
         self.highlight.isHidden = false //sets to visible for first note.
     }
+
     
-    //TODO either use this or remove this
-    class IterVars {
-        var scaleNoteArray:[NoteEnum]?
-        var currentPlayerNoteEnum:NoteEnum?
-        var currentScaleNoteEnum:NoteEnum?
-        var playersFirstOctave:OctaveEnum?
-        var playersFirstNote:NoteEnum?
-        var currPlayerNoteObj:Note?
-        var isFirstMethodCall:Bool?
-        var scaleDirection: Scale.Direction?
-    }
-    
-    func scaleHelperPlayCorrectNote(_ scaleNoteArray:[NoteEnum], _ currentPlayerNoteEnum:NoteEnum,
-                                    _ currentRawScaleNoteEnum:NoteEnum,
-                                    _ playersFirstOctave:OctaveEnum, _ playersFirstNote:NoteEnum, _ currPlayerNoteObj:Note,
-                                    _ isFirstMethodCall:Bool, _ scaleDirection: Scale.Direction, _ targetScale: Scale){
-        //make a mutable version of the currentScaleNoteEnum
-        var currentScaleNoteEnum = currentRawScaleNoteEnum
+    func playCorrectNote(){
+        //calculate the correct octave for the player note
+        correctedOctaveForNote = findContextCorrectedOctave(direction: Scale.Direction.Ascending)
         
-        //CALCULATE THE WORKING OCTAVE
-        var correctedOctaveForNote = scaleHelperFindContextCorrectedOctave(CurrentTestNote: currentPlayerNoteEnum,
-                                                                           FirstScaleNote: scaleNoteArray[0],
-                                                                           CurrentScaleNote: currentScaleNoteEnum,
-                                                                           StartOctave: playersFirstOctave,
-                                                                           isFirstMethodCall: isFirstMethodCall,
-                                                                           direction: Scale.Direction.Ascending)
-        //var overrideEnumAndLowerSemiTone = false
+        //check if currentNote will be on the same line as last note, if so then correct this
+        correctIfCurrentCorrectNoteOnSameLineAsLastNote()
         
-        //Invariant checks
-        if correctedOctaveForNote == OctaveEnum.invalid || correctedOctaveForNote == OctaveEnum.one { return }
-        if currPlayerNoteObj.representsOctave == nil { return }
-        
-        //CHECKING FOR DOUBLE LINE NOTES Check if note should be raised a line (if last note was on the same line) and dropped a semitone
-        let useSharpsTF:Bool = targetScale.scaleStyle == Scale.Style.Major ? true : false
-        let shouldRaiseTonesBar = noteOnSameLinePrevious(currentScaleNoteEnum, correctedOctaveForNote, useSharpsTF)
-        if shouldRaiseTonesBar {
-            //get a note on the line above, then later make this note flat (this will show the same note, but on the line above)
-            currentScaleNoteEnum = stave.getWhiteKeyAbove(currentNote: currentScaleNoteEnum, useSharps: useSharpsTF)
+        //invariant checks (must come after octave calculation)
+        if !playNoteInvariantCheckIsSafe(){ return }
             
-            //re-calculate octave
-            correctedOctaveForNote = scaleHelperFindContextCorrectedOctave(CurrentTestNote: currentPlayerNoteEnum,
-                                                                           FirstScaleNote: scaleNoteArray[0],
-                                                                           CurrentScaleNote: currentScaleNoteEnum,
-                                                                           StartOctave: playersFirstOctave,
-                                                                           isFirstMethodCall: isFirstMethodCall,
-                                                                           direction: Scale.Direction.Ascending)
-        }
-        
-        
-        //let playNoteDelay = 0.5 //turned this into a property
-        
         //CHECK IF PLAYER SELECTED THE RIGHT NOTE POSITION (May or may not have choses right sharp/flat status)
-        if currentPlayerNoteEnum == currentScaleNoteEnum && currPlayerNoteObj.representsOctave == correctedOctaveForNote{
-            //play note (delay)
-            currPlayerNoteObj.playNote()
-            Thread.sleep(forTimeInterval: playNoteDelay)
-            
-            //Note should be moved one line up, allow this logic to occur
-            if shouldRaiseTonesBar {
-                //adjustNoteAppearanceForFlatSharpCorrectNote(note: currPlayerNoteObj, correctNoteEnum: currentScaleNoteEnum,
-                //                                 useSharps: useSharpsTF, forceToneDown: shouldRaiseTonesBar)
-                specialNoteAppearanceAdjustment(note: currPlayerNoteObj, correctNoteEnum:currentScaleNoteEnum, useSharps:useSharpsTF)
-            } else {
-                adjustNoteAppearanceForFlatSharpCorrectNote(note: currPlayerNoteObj, correctNoteEnum: currentScaleNoteEnum,
-                                                 useSharps: useSharpsTF, forceToneDown: shouldRaiseTonesBar)
-            }
-            lastNotePoint = currPlayerNoteObj.position
-        }
-        //PLAYER DID NOT CHOOSE CORRECT NOTE POSITION (May or may not have choses right sharp/flat status)
-        else
-        {
-            let octave = correctedOctaveForNote
-            //if player is holding note, remove it and lock it until it has been played
-            for iter in self.touchNotePairs{ //!!! O(n) !!! - however, n will never be larger than 8 or 16
-                if iter.value == currPlayerNoteObj{
-                    self.touchNotePairs.removeValue(forKey: iter.key)
-                    break
-                }
-            }
-            //move note to correct y position (if needed) (delay)
-            var correctLocation = self.stave.getNotePosition(note: currentScaleNoteEnum, octave: octave, ProduceSharps: useSharpsTF,
-                                                             stavePositionOffset: self.stave.position)
-            
-            //use sharps or flats? currently using sharps if scale is major and flats if the scale is minor
-            stave.findNoteValueAndOctave(note: currPlayerNoteObj, futureNotePosition: correctLocation, StavePosition: stave.position)
-            adjustNoteAppearanceForFlatSharpCorrectNote(note: currPlayerNoteObj, correctNoteEnum: currentScaleNoteEnum, useSharps: useSharpsTF, forceToneDown: shouldRaiseTonesBar)
-            
-            
-            correctLocation.x = currPlayerNoteObj.position.x
-            
-            //set up the move
-            let moveCorrectPosition = SKAction.move(to: correctLocation, duration: playNoteDelay/4)
-            currPlayerNoteObj.run(moveCorrectPosition)
-            highlight.run(moveCorrectPosition)
-            Thread.sleep(forTimeInterval: playNoteDelay/4 + 0.1) //delay so note will be positioned for snap
-            
-            currPlayerNoteObj.updateNote(NotesUpdatedPoint: correctLocation, StavePositionInView: self.stave.position, Stave: self.stave) //update the note enum
-            
-            //play note (delay) (must retype this code incase octave isn't valid
-            currPlayerNoteObj.playNote()
-            Thread.sleep(forTimeInterval: playNoteDelay)
-            lastNotePoint = correctLocation
+        if currentNoteIsCorrectlySetUp(){
+            //Player set up the correct note for this position
+            playCurrentNote()
+        } else {
+            //PLAYER DID NOT CHOOSE RIGHT NOTE POSITION (May or may not have choses right sharp/flat status)
+            fixPlayerCurrentNote()
         }
         
     }
     
+    //invariant1: assumes correctedOctaveForNote has been calculated
+    func correctIfCurrentCorrectNoteOnSameLineAsLastNote(){
+        //check if there is a last note played, if there isn't then make the current note the last note played (and return)
+        if !hasLastNotePlayed {
+            hasLastNotePlayed = true
+            setMockNoteLast(currentScaleNoteEnum!, correctedOctaveForNote!)
+            return
+        }
+        
+        //clear any forcing that the last correction may have induced
+        specialCorrectionFlagForSameLineNotes = false
+        
+        //get location of the last note played by the scale (function below updates its position)
+        let lastPoint = stave.getNotePosition(note: mockNoteLast.representsNote!, octave: mockNoteLast.representsOctave!,
+                                              ProduceSharps: shouldProduceSharps(), stavePositionOffset: stave.position)
+        
+        
+        //get location of the current calcuated note to be played by the scale
+        let currPoint = stave.getNotePosition(note: currentScaleNoteEnum!, octave: correctedOctaveForNote!,
+                                                 ProduceSharps: shouldProduceSharps(), stavePositionOffset: stave.position)
+        //determine if notes occupy the same white space
+        if (yValuesSameWithinThreshold(lastPoint, currPoint, stave.noteSpacing * 0.1)){
+            //if notes are same, then adjust the scales current calculations to be the same
+            //ASCENDING SPECIFIC CODE BELOW
+            specialCorrectionFlagForSameLineNotes = true
+            if(currentScaleNoteEnum == NoteEnum.B) {
+                //if note is B, then white key above is is on another octave
+                whiteOctaveEnum = correctedOctaveForNote!.attemptGetHigher()
+            }
+            whiteNoteEnum = stave.getWhiteKeyAbove(currentNote: currentScaleNoteEnum!, useSharps: shouldProduceSharps())
+            setMockNoteLast(whiteNoteEnum!, whiteOctaveEnum!) //updates position as a side effect
+            return
+        } else {
+            //update the last note played to represent the current values
+            setMockNoteLast(currentScaleNoteEnum!, correctedOctaveForNote!)
+        }
+        
+        
+    }
+
+    func setMockNoteLast(_ lastNoteEnum:NoteEnum, _ lastOctEnum:OctaveEnum){
+        //update mock note data
+        mockNoteLast.representsNote = lastNoteEnum
+        mockNoteLast.representsOctave = lastOctEnum
+        
+        //update mock note position (this is used to calculate the white note position later)
+        mockNoteLast.position =
+            stave.getNotePosition(
+                note: lastNoteEnum,
+                octave: lastOctEnum,
+                ProduceSharps: shouldProduceSharps(),
+                stavePositionOffset: stave.position)
+    }
+    
+    func shouldProduceSharps() -> Bool{
+        return targetScale!.scaleStyle == Scale.Style.Major ? true : false
+    }
+    
+    
+    func currentNoteIsCorrectlySetUp() -> Bool {
+        
+        
+        //check octave
+        if currentPlayerNoteEnum! != currentScaleNoteEnum! {
+            return false
+        }
+        
+        //check represents note
+        if currPlayerNoteObj!.representsOctave! != correctedOctaveForNote{
+            return false
+        }
+        
+        // the repOctave and repNote should be correct, but we need to see if it is placed at the correct location in this situation
+        if(specialCorrectionFlagForSameLineNotes){
+            //this note requires special handling since the calculated value was determined to be on the same line as previous calc
+            //ASCENDING SCALE SPECIFIC CODE
+            //load mockNoteCurr with the player's current note information (in terms of WHITE KEYS)
+            stave.findNoteValueAndOctave(note: mockNoteCurr, futureNotePosition: currPlayerNoteObj!.position,
+                                         StavePosition: stave.position)
+
+            //mockNote now contains the white key information of the player note, see if that information matches corrected
+            let playerPoint = stave.getNotePosition(note: mockNoteCurr.representsNote!, octave: mockNoteCurr.representsOctave!,
+                                                    ProduceSharps: shouldProduceSharps(), stavePositionOffset: stave.position)
+            //mockNoteLast currently contains correct position for the corrected note (done in the checking for same line method)
+            let correctPoint = mockNoteLast.position
+            
+            //check if positions are the same, if they are (within a threshold) then the player positioned the note correctly
+            if(!yValuesSameWithinThreshold(playerPoint, correctPoint, stave.noteSpacing * 0.1)){
+                return false
+            }
+        }
+        
+        
+        return true
+        //return currentPlayerNoteEnum! == currentScaleNoteEnum! && currPlayerNoteObj!.representsOctave! == correctedOctaveForNote
+    }
+    
+    func playCurrentNote(){
+        //play note (delay)
+        currPlayerNoteObj!.playNote()
+        Thread.sleep(forTimeInterval: playNoteDelay)
+        
+        if (!specialCorrectionFlagForSameLineNotes){
+            //TODO MAKE THIS CHECK PITCH
+            let useSharpsTF:Bool = shouldProduceSharps()
+            adjustNoteAppearanceForFlatSharp(note: currPlayerNoteObj!, correctNoteEnum: currentScaleNoteEnum!, useSharps: useSharpsTF)
+        }
+    }
+    
+    func fixPlayerCurrentNote(){
+        let octave = correctedOctaveForNote!
+        
+        //if player is holding note, remove it and lock it until it has been played
+        for iter in self.touchNotePairs{ //!!! O(n) !!! - however, n will never be larger than 8 or 16
+            if iter.value == currPlayerNoteObj{
+                self.touchNotePairs.removeValue(forKey: iter.key)
+                break
+            }
+        }
+        //move note to correct y position (if needed) (delay)
+        let useSharpsTF:Bool = shouldProduceSharps()
+        var correctLocation = self.stave.getNotePosition(note: currentScaleNoteEnum!, octave: octave, ProduceSharps: useSharpsTF,
+                                                         stavePositionOffset: self.stave.position)
+        
+        if(specialCorrectionFlagForSameLineNotes){
+            correctLocation = mockNoteLast.position
+        }
+        
+        //use sharps or flats? currently using sharps if scale is major and flats if the scale is minor
+        //update player note value
+        stave.findNoteValueAndOctave(note: currPlayerNoteObj!, futureNotePosition: correctLocation, StavePosition: stave.position)
+        
+        if (!specialCorrectionFlagForSameLineNotes){
+            //movement will make a black note, so change it to sharp or flat depending on what is to be used
+            adjustNoteAppearanceForFlatSharp(note: currPlayerNoteObj!, correctNoteEnum: currentScaleNoteEnum!, useSharps: useSharpsTF)
+        } else {
+            //this means that the note requires special handling, simply lower the note by 1 semitone (specific to ascending scales)
+            currPlayerNoteObj!.lowerByOneSemitone()
+            
+            //sometimes the player may have a sharp in teh wrong location, and an additional drop in semi-tone may be requried
+            if (currPlayerNoteObj!.representsNote != currentScaleNoteEnum){
+                currPlayerNoteObj!.lowerByOneSemitone()
+            }
+        }
+        
+        
+        correctLocation.x = currPlayerNoteObj!.position.x
+        
+        //set up the move
+        let moveCorrectPosition = SKAction.move(to: correctLocation, duration: playNoteDelay/4)
+        currPlayerNoteObj!.run(moveCorrectPosition)
+        highlight.run(moveCorrectPosition)
+        Thread.sleep(forTimeInterval: playNoteDelay/4 + 0.1) //delay so note will be positioned for snap
+        
+        currPlayerNoteObj!.updateNote(NotesUpdatedPoint: correctLocation, StavePositionInView: self.stave.position, Stave: self.stave) //update the note enum
+        
+        //play note (delay) (must retype this code incase octave isn't valid
+        currPlayerNoteObj!.playNote()
+        Thread.sleep(forTimeInterval: playNoteDelay)
+    }
+
+    func playNoteInvariantCheckIsSafe() -> Bool {
+        if currPlayerNoteObj == nil {
+            return false
+        }
+        
+        if targetScale == nil {
+            return false
+        }
+        
+        if currentScaleNoteEnum == nil {
+            return false
+        }
+        
+        if currentPlayerNoteEnum == nil {
+            return false
+        }
+        
+        if correctedOctaveForNote == OctaveEnum.invalid || correctedOctaveForNote == OctaveEnum.one { return false }
+        
+        if currPlayerNoteObj!.representsOctave == nil { return false }
+        return true;
+    }
+    
+    //@deprecated - remove these after scale playing is bug free
     //Compares agaisnt the lastNotePosition field and determines if current note was previous on the same line
     func noteOnSameLinePrevious(_ currentScaleNoteEnum:NoteEnum, _ correctedOctaveForNote:OctaveEnum,_ useSharpsTF:Bool) -> Bool {
         let calculatedPosition = stave.getNotePosition(note: currentScaleNoteEnum, octave: correctedOctaveForNote,
@@ -355,29 +507,36 @@ class ScalePlayer {
     
     //helper function to determine the octave the correct note should be in (based on the first octave the player chose)
     //If the scale is ascending, then the octave should be the same as the first notes octave until
-    func scaleHelperFindContextCorrectedOctave(CurrentTestNote currTestNote:NoteEnum,
-                                               FirstScaleNote firstScaleNote:NoteEnum,
-                                               CurrentScaleNote currScaleNote:NoteEnum,
-                                               StartOctave startOctave:OctaveEnum,
-                                               isFirstMethodCall:Bool, direction:Scale.Direction) -> OctaveEnum {
+    func findContextCorrectedOctave(direction:Scale.Direction) -> OctaveEnum {
+        
         //ONLY DIRECTION CURRENT SUPPORTED IS ASCENDING
         if direction == Scale.Direction.Ascending {
+            
             //if the note is less than the start note, it is one octave higher than the start octave
-            let testNoteLessThanStart = currScaleNote.rawValueStartingWithC() <= firstScaleNote.rawValueStartingWithC()
-            if testNoteLessThanStart && !isFirstMethodCall {
-                return OctaveEnum(rawValue: startOctave.rawValue + 1)!   //return an octave higher than what was started
+            let testNoteLessThanStart =
+                    currentScaleNoteEnum!.rawValueStartingWithC() <= (scaleNoteArray?[0])!.rawValueStartingWithC()
+            
+            //true means there should be an octave correction for note
+            if testNoteLessThanStart && !isFirstNote {
+                return OctaveEnum(rawValue: playersOctave!.rawValue + 1)!   //return an octave higher than what was started
             } else {
                 //Current octave is valid
-                return startOctave
+                return playersOctave!
             }
-        } else if direction == Scale.Direction.Descending{
-            //UNTESTED BRANCH - All scales are currently ascending
-            let testNoteGreaterThanStart = currScaleNote.rawValueStartingWithC() >= firstScaleNote.rawValueStartingWithC()
-            if testNoteGreaterThanStart && !isFirstMethodCall {
-                return OctaveEnum(rawValue: startOctave.rawValue - 1)!   //return an octave higher than what was started
+            
+        }
+        
+        
+        
+        
+        //UNTESTED BRANCH - All scales are currently ascending (added this code incase future support)
+        else if direction == Scale.Direction.Descending{
+            let testNoteGreaterThanStart = currentScaleNoteEnum!.rawValueStartingWithC() >= (scaleNoteArray?[0])!.rawValueStartingWithC()
+            if testNoteGreaterThanStart && !isFirstNote {
+                return OctaveEnum(rawValue: playersOctave!.rawValue - 1)!   //return an octave higher than what was started
             } else {
                 //Current octave is valid
-                return startOctave
+                return playersOctave!
             }
         } else {
             return OctaveEnum.invalid
@@ -423,4 +582,100 @@ class ScalePlayer {
         case overrideToUpSemitone
         case normal
     }
+    
+    //broken version
+    //    func scaleHelperPlayCorrectNote(_ scaleNoteArray:[NoteEnum], _ currentPlayerNoteEnum:NoteEnum,
+    //                                    _ currentRawScaleNoteEnum:NoteEnum,
+    //                                    _ playersFirstOctave:OctaveEnum, _ playersFirstNote:NoteEnum, _ currPlayerNoteObj:Note,
+    //                                    _ isFirstMethodCall:Bool, _ scaleDirection: Scale.Direction, _ targetScale: Scale){
+    //        //make a mutable version of the currentScaleNoteEnum
+    //        var currentScaleNoteEnum = currentRawScaleNoteEnum
+    //
+    //        //CALCULATE THE WORKING OCTAVE
+    //        var correctedOctaveForNote = scaleHelperFindContextCorrectedOctave(CurrentTestNote: currentPlayerNoteEnum,
+    //                                                                           FirstScaleNote: scaleNoteArray[0],
+    //                                                                           CurrentScaleNote: currentScaleNoteEnum,
+    //                                                                           StartOctave: playersFirstOctave,
+    //                                                                           isFirstMethodCall: isFirstMethodCall,
+    //                                                                           direction: Scale.Direction.Ascending)
+    //        //var overrideEnumAndLowerSemiTone = false
+    //
+    //        //Invariant checks
+    //        if correctedOctaveForNote == OctaveEnum.invalid || correctedOctaveForNote == OctaveEnum.one { return }
+    //        if currPlayerNoteObj.representsOctave == nil { return }
+    //
+    //        //CHECKING FOR DOUBLE LINE NOTES Check if note should be raised a line (if last note was on the same line) and dropped a semitone
+    //        let useSharpsTF:Bool = targetScale.scaleStyle == Scale.Style.Major ? true : false
+    //        let shouldRaiseTonesBar = noteOnSameLinePrevious(currentScaleNoteEnum, correctedOctaveForNote, useSharpsTF)
+    //        if shouldRaiseTonesBar {
+    //            //get a note on the line above, then later make this note flat (this will show the same note, but on the line above)
+    //            currentScaleNoteEnum = stave.getWhiteKeyAbove(currentNote: currentScaleNoteEnum, useSharps: useSharpsTF)
+    //
+    //            //re-calculate octave
+    //            correctedOctaveForNote = scaleHelperFindContextCorrectedOctave(CurrentTestNote: currentPlayerNoteEnum,
+    //                                                                           FirstScaleNote: scaleNoteArray[0],
+    //                                                                           CurrentScaleNote: currentScaleNoteEnum,
+    //                                                                           StartOctave: playersFirstOctave,
+    //                                                                           isFirstMethodCall: isFirstMethodCall,
+    //                                                                           direction: Scale.Direction.Ascending)
+    //        }
+    //
+    //
+    //        //let playNoteDelay = 0.5 //turned this into a property
+    //
+    //        //CHECK IF PLAYER SELECTED THE RIGHT NOTE POSITION (May or may not have choses right sharp/flat status)
+    //        if currentPlayerNoteEnum == currentScaleNoteEnum && currPlayerNoteObj.representsOctave == correctedOctaveForNote{
+    //            //play note (delay)
+    //            currPlayerNoteObj.playNote()
+    //            Thread.sleep(forTimeInterval: playNoteDelay)
+    //
+    //            //Note should be moved one line up, allow this logic to occur
+    //            if shouldRaiseTonesBar {
+    //                //adjustNoteAppearanceForFlatSharpCorrectNote(note: currPlayerNoteObj, correctNoteEnum: currentScaleNoteEnum,
+    //                //                                 useSharps: useSharpsTF, forceToneDown: shouldRaiseTonesBar)
+    //                specialNoteAppearanceAdjustment(note: currPlayerNoteObj, correctNoteEnum:currentScaleNoteEnum, useSharps:useSharpsTF)
+    //            } else {
+    //                adjustNoteAppearanceForFlatSharpCorrectNote(note: currPlayerNoteObj, correctNoteEnum: currentScaleNoteEnum,
+    //                                                 useSharps: useSharpsTF, forceToneDown: shouldRaiseTonesBar)
+    //            }
+    //            lastNotePoint = currPlayerNoteObj.position
+    //        }
+    //        //PLAYER DID NOT CHOOSE CORRECT NOTE POSITION (May or may not have choses right sharp/flat status)
+    //        else
+    //        {
+    //            let octave = correctedOctaveForNote
+    //            //if player is holding note, remove it and lock it until it has been played
+    //            for iter in self.touchNotePairs{ //!!! O(n) !!! - however, n will never be larger than 8 or 16
+    //                if iter.value == currPlayerNoteObj{
+    //                    self.touchNotePairs.removeValue(forKey: iter.key)
+    //                    break
+    //                }
+    //            }
+    //            //move note to correct y position (if needed) (delay)
+    //            var correctLocation = self.stave.getNotePosition(note: currentScaleNoteEnum, octave: octave, ProduceSharps: useSharpsTF,
+    //                                                             stavePositionOffset: self.stave.position)
+    //
+    //            //use sharps or flats? currently using sharps if scale is major and flats if the scale is minor
+    //            stave.findNoteValueAndOctave(note: currPlayerNoteObj, futureNotePosition: correctLocation, StavePosition: stave.position)
+    //            adjustNoteAppearanceForFlatSharpCorrectNote(note: currPlayerNoteObj, correctNoteEnum: currentScaleNoteEnum, useSharps: useSharpsTF, forceToneDown: shouldRaiseTonesBar)
+    //
+    //
+    //            correctLocation.x = currPlayerNoteObj.position.x
+    //
+    //            //set up the move
+    //            let moveCorrectPosition = SKAction.move(to: correctLocation, duration: playNoteDelay/4)
+    //            currPlayerNoteObj.run(moveCorrectPosition)
+    //            highlight.run(moveCorrectPosition)
+    //            Thread.sleep(forTimeInterval: playNoteDelay/4 + 0.1) //delay so note will be positioned for snap
+    //
+    //            currPlayerNoteObj.updateNote(NotesUpdatedPoint: correctLocation, StavePositionInView: self.stave.position, Stave: self.stave) //update the note enum
+    //            
+    //            //play note (delay) (must retype this code incase octave isn't valid
+    //            currPlayerNoteObj.playNote()
+    //            Thread.sleep(forTimeInterval: playNoteDelay)
+    //            lastNotePoint = correctLocation
+    //        }
+    //        
+    //    }
+    
 }
