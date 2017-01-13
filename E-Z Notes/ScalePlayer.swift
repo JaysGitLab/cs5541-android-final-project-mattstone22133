@@ -6,6 +6,12 @@
 //  Copyright © 2016 Matt Stone. All rights reserved.
 //
 // TODO: remove old deprecated functions or functions that or not longer used
+// TODO: change scale player so that it reads whether the first note is sharp/flat and uses sharps vs. flats accordingly
+// TODO: remove scale playing functions from the sceen class
+//
+// Developer quick notes: to stop function where scale attempts to correct notes so that they are never on same line,
+// simply: remove the call to "correctIfCurrentCorrectNoteOnSameLineAsLastNote" from playCorrectNote, this will stop all
+// boolean flags in other methods from doing the behavior. 
 //
 
 import Foundation
