@@ -25,9 +25,10 @@ class ScalePlayer {
     var highlight:SKSpriteNode
     var touchNotePairs:[UITouch : Note]
     var stave:Stave
+    var useModifications:Note.Pitch = Note.Pitch.Normal
     
     //interative state variables
-    var lastNotePoint:CGPoint? = nil //this is used to help ensure that scale notes never end up on the same line
+    var lastNotePoint:CGPoint? = nil //@deprecated this is used to help ensure that scale notes never end up on the same line
     
     //setting variables (delay timings)
     let moveToPlayerNoteDelay = 0.1
@@ -79,13 +80,16 @@ class ScalePlayer {
                     NoteCollection notes:SKNode,
                     HighlightSprite highlight:SKSpriteNode,
                     TouchNotePairs touchNotePairs:[UITouch : Note],
-                    StaveObject stave:Stave
+                    StaveObject stave:Stave,
+                    useSharpsOrFlats sharpsOrFlats:Note.Pitch
                     ){
         self.targetScale = targetScale
         self.notes = notes
         self.highlight = highlight
         self.touchNotePairs = touchNotePairs
         self.stave = stave
+        self.useModifications = sharpsOrFlats
+        
         lastNotePoint = nil
         scalePlayInNewThread()
         
@@ -229,6 +233,8 @@ class ScalePlayer {
             if(currentScaleNoteEnum == NoteEnum.B) {
                 //if note is B, then white key above is is on another octave
                 whiteOctaveEnum = correctedOctaveForNote!.attemptGetHigher()
+            } else {
+                whiteOctaveEnum = correctedOctaveForNote!
             }
             whiteNoteEnum = stave.getWhiteKeyAbove(currentNote: currentScaleNoteEnum!, useSharps: shouldProduceSharps())
             setMockNoteLast(whiteNoteEnum!, whiteOctaveEnum!) //updates position as a side effect
@@ -256,7 +262,13 @@ class ScalePlayer {
     }
     
     func shouldProduceSharps() -> Bool{
-        return targetScale!.scaleStyle == Scale.Style.Major ? true : false
+        if(useModifications == Note.Pitch.Sharp){
+            return true
+        } else if (useModifications == Note.Pitch.Flat){
+            return false
+        } else {
+            return targetScale!.scaleStyle == Scale.Style.Major ? true : false
+        }
     }
     
     

@@ -17,6 +17,8 @@ class EZNoteScene: SKScene {
     let touchThresholdScalar: CGFloat = 2.5 //increasing this value will make it easier to touch notes, but harder to distinguish (2.0 is a decent value)
     private(set) var showNoteLetters:Bool = false
     var targetScale:Scale? = nil
+    var useModifications:Note.Pitch? = Note.Pitch.Normal
+    
     let scaleButton:SKSpriteNode = SKSpriteNode(imageNamed:"NoteButton.png")
     let highlight:SKSpriteNode = SKSpriteNode(imageNamed: "note_highlight_e-z-noteApp.png")
     var playingScale:Bool = false
@@ -282,6 +284,7 @@ class EZNoteScene: SKScene {
                 if !lock.isLocked() {
                     // connect the note to the finger for touches moved
                     touchNotePairs[touch!] = note
+                    note.middleCBar.isHidden = true
                     
                     // check if taped two times, if so change state
                     if (touch?.tapCount)! > 1 {
@@ -310,7 +313,8 @@ class EZNoteScene: SKScene {
         {
            //scalePlay() //this is the old scale methods (that were inside class), left until new scale method is functional
             scalePlayer?.playAScale(TargetScale: targetScale!, NoteCollection: notes,
-                                    HighlightSprite: highlight, TouchNotePairs: touchNotePairs, StaveObject: stave)
+                                    HighlightSprite: highlight, TouchNotePairs: touchNotePairs,
+                                    StaveObject: stave, useSharpsOrFlats: useModifications!)
         }
         
         //check if lock button was pressed
@@ -435,15 +439,22 @@ class EZNoteScene: SKScene {
         if let note = touchNotePairs[touch!]{
             //there was a note, try to snap it to a bar or let it fall to bottom of screen
             let futurePoint:CGPoint? = snapOrDropNote(note: note)
+            
+            //update note internal data for what it will be at the future point
             stave.findNoteValueAndOctave(note: note, futureNotePosition: futurePoint, StavePosition: stave.position)
             if futurePoint != nil {
                 note.playNote()
                 note.updateNote(NotesUpdatedPoint: futurePoint!, StavePositionInView: stave.position, Stave: stave)
+                
+                //if let repNote = note.representsNote { //MOVING TO PLAY NOTE
+                //    keyboard?.highlightKeysByNoteEnum(note: repNote)
+                //}
             }
         }
         
         //remove touch and note pair from dictionary
         touchNotePairs.removeValue(forKey: touch!) //first touch is guaranteed to not be nil
+        keyboard?.removeTouchFromHistory(touch: touch!) //this is required to remove sliding from history
         
     }
     
@@ -497,17 +508,6 @@ class EZNoteScene: SKScene {
                             //is a white key, only play the white key's position
                             highlightSingleNotePosition(keyInfo: keyInfo)
                         }
-//                        let currentHighlight = chordHighlights![nextChordIndex]
-//                        nextChordIndex = (nextChordIndex + 1) % chordHighlights!.count
-//                        
-//                        currentHighlight.removeAllActions()
-//                        currentHighlight.alpha = 1
-//                        
-//                        currentHighlight.position = stave.getNotePosition(note: keyInfo.1!, octave: keyInfo.2!,
-//                                                                          ProduceSharps: false, stavePositionOffset: stave.position)
-//                        currentHighlight.position.x = keyInfo.0
-//                        let fade = SKAction.fadeAlpha(to: 0.0, duration: noteFadeTime)
-//                        currentHighlight.run(fade)
                     }
                 }
             }

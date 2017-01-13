@@ -61,6 +61,18 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
                 typeChoice = Scale.Style.Major
             }
             singleton.targetScale?.setScaleBasedOnString(scale: keyString, Style: typeChoice)
+            if(keyString.characters.count > 1){
+                //get the character after the letter, and determine if it is # or b
+                let index = keyString.index(keyString.startIndex, offsetBy: 1 )
+                let typeChar = keyString[index]
+                if(typeChar == "#"){
+                    singleton.useModifications = Note.Pitch.Sharp
+                } else {
+                    singleton.useModifications = Note.Pitch.Flat
+                }
+            } else {
+                singleton.useModifications = Note.Pitch.Normal
+            }
         }
     }
     

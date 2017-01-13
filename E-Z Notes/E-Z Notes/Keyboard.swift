@@ -35,6 +35,7 @@ class Keyboard: SKNode {
     private var totalNumberWhiteKeys = -1
     private var startOctave = -1
     private var lastKey:KeyboardTouchableKey? = nil
+    private var lastTouchKeyPairs:[UITouch : KeyboardTouchableKey] = [:]
     
     init(frameSize:CGSize){
         super.init()
@@ -254,6 +255,9 @@ class Keyboard: SKNode {
     }
     
     //returns x location of key, note of key, and octave of key
+    //@WARNING: a call to removeTouchHistory MUST be done in touchesEnded -- otherwise there will be bugs caused
+    // by the sliding note feature. The keyboard tracks the last key a touch encountered and the keyboard should know when that touch
+    // has been lifted. Otherwise, it will think the touch is still active and make the key it last touched off limits
     func pollKeyTouched(touch: UITouch) -> (CGFloat, NoteEnum?, OctaveEnum?)?{
         let touchLocation = touch.location(in: self)
         
@@ -262,7 +266,8 @@ class Keyboard: SKNode {
             if (touchCollisionWithKey(TouchLocation: touchLocation, KeyObj: key)){
                 key.playNote()
                 playKey(key: key)
-                lastKey = key
+                //lastKey = key
+                lastTouchKeyPairs[touch] = key
                 return (calculateTrueXPosition(key: key), key.keyNumber, key.octaveNumber)
             }
         }
@@ -272,7 +277,8 @@ class Keyboard: SKNode {
             if (touchCollisionWithKey(TouchLocation: touchLocation, KeyObj: key)){
                 //key.playNote()
                 playKey(key: key)
-                lastKey = key
+                //lastKey = key
+                lastTouchKeyPairs[touch] = key
                 return (calculateTrueXPosition(key: key), key.keyNumber, key.octaveNumber)
             }
         }
@@ -281,9 +287,14 @@ class Keyboard: SKNode {
         return nil
     }
     
+    func removeTouchFromHistory(touch: UITouch){
+        lastTouchKeyPairs.removeValue(forKey: touch)
+    }
+    
     //returns x location of key, note of key, and octave of key
     func pollDifferentKeyTouched(touch: UITouch) -> (CGFloat, NoteEnum?, OctaveEnum?)?{
-        if(lastKey == nil){
+        //if(lastKey == nil){
+        if (lastTouchKeyPairs[touch] == nil){
             return nil
         }
         
@@ -292,10 +303,12 @@ class Keyboard: SKNode {
         //check black keys (must be checked first since they're also in the range of the white keys
         for key in blackKeys.children as! [KeyboardTouchableKey]{
             if (touchCollisionWithKey(TouchLocation: touchLocation, KeyObj: key)){
-                if(key != lastKey){
+                //if(key != lastKey){
+                if(key != lastTouchKeyPairs[touch]){
                     key.playNote()
                     playKey(key: key)
-                    lastKey = key
+                    //lastKey = key
+                    lastTouchKeyPairs[touch] = key
                     return (calculateTrueXPosition(key: key), key.keyNumber, key.octaveNumber)
                 } else {
                     return nil
@@ -306,10 +319,12 @@ class Keyboard: SKNode {
         //check white keys
         for key in whiteKeys.children as! [KeyboardTouchableKey]{
             if (touchCollisionWithKey(TouchLocation: touchLocation, KeyObj: key)){
-                if(key != lastKey){
+                //if(key != lastKey){
+                if(key != lastTouchKeyPairs[touch]){
                     key.playNote()
                     playKey(key: key)
-                    lastKey = key
+                    //lastKey = key
+                    lastTouchKeyPairs[touch] = key
                     return (calculateTrueXPosition(key: key), key.keyNumber, key.octaveNumber)
                 } else {
                     return nil
@@ -326,6 +341,20 @@ class Keyboard: SKNode {
         key.playNote()
         
         //highlight the key on the piano
+        highlightKey(key: key)
+        
+        //        let highlight = getYellowKeyReference()
+        //        highlight.removeAllActions()
+        //        highlight.position = key.position
+        //        highlight.xScale = key.xScale
+        //        highlight.yScale = key.yScale
+        //        highlight.alpha = 1.0
+        //        highlight.zPosition = key.zPosition + 0.1
+        //        let fade = SKAction.fadeAlpha(to: 0.0, duration: yellowKeyFadeTime)
+        //        highlight.run(fade)
+    }
+    
+    func highlightKey(key:KeyboardTouchableKey){
         let highlight = getYellowKeyReference()
         highlight.removeAllActions()
         highlight.position = key.position
@@ -434,6 +463,24 @@ class Keyboard: SKNode {
             key.octaveNumber = currOct!.attemptGetHigher()
         }
         return true
+    }
+    
+    func highlightKeysByNoteEnum(note:NoteEnum){
+        if note.isFlatOrSharp() {
+            //check black keys
+            for key in blackKeys.children as! [KeyboardTouchableKey] {
+                if key.keyNumber != nil && key.keyNumber == note {
+                    highlightKey(key: key)
+                }
+            }
+        } else {
+            //check white keys
+            for key in whiteKeys.children as! [KeyboardTouchableKey] {
+                if key.keyNumber != nil && key.keyNumber == note {
+                    highlightKey(key: key)
+                }
+            }
+        }
     }
     
     func makeSpriteFadeTo100(sprite:SKSpriteNode){

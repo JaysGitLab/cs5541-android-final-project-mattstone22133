@@ -128,7 +128,7 @@ class Note: SKSpriteNode {
                 setOctaveNumberText()
                 setNoteLetterText()
                 
-                return  //prevents the label from being hidden
+                //return  //prevents the label from being hidden
             } else {
                 //if it is not a valid note, do not show labels.
                 hideSubSprites()
@@ -141,7 +141,7 @@ class Note: SKSpriteNode {
     
     func enableOrDisableMiddleCBar(){
         if let repNote = representsNote, let oct = representsOctave{
-            if(repNote == NoteEnum.C && oct == OctaveEnum.four){
+            if(repNote == NoteEnum.C && oct == OctaveEnum.four && !flat && !sharp){
                 middleCBar.isHidden = false
             }
             else if (noteInCPositionButSharpOrFlat()){
@@ -279,6 +279,10 @@ class Note: SKSpriteNode {
             run(SKAction.playSoundFileNamed(noteSoundFileStr, waitForCompletion: false))
         } else {
             print("\n\nFAILED TO LOAD SOUND\n\n")
+        }
+
+        if let kb = GlobalSpace.ezscene?.keyboard, let note = representsNote {
+            kb.highlightKeysByNoteEnum(note: note)
         }
     }
     
