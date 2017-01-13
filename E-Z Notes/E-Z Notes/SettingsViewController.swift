@@ -13,7 +13,7 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
 
     @IBOutlet weak var doublePickerKeyScale: UIPickerView!
     @IBOutlet weak var showLettersOnNotesSwitch: UISwitch!
-    let scaleTypes = ["Major", "Minor"]
+    let scaleTypes = ["Major", "Minor", "Harmonic Minor"]
     let scaleKeys = ["C", "C#", "Db", "D", "D#", "Eb", "E","F", "F#", "Gb","G", "G#", "Ab", "A","A#", "Bb", "B"]
     let typeIndex = 1
     let keyIndex = 0
@@ -56,9 +56,9 @@ class SettingsViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
                 typeChoice = Scale.Style.Major
             } else if typeString == "Minor" {
                 typeChoice = Scale.Style.Minor
-            } else {
+            } else{
                 //default choice 
-                typeChoice = Scale.Style.Major
+                typeChoice = Scale.Style.HarmonicMinor
             }
             singleton.targetScale?.setScaleBasedOnString(scale: keyString, Style: typeChoice)
             if(keyString.characters.count > 1){

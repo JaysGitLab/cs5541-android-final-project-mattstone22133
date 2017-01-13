@@ -326,12 +326,8 @@ class ScalePlayer {
         let octave = correctedOctaveForNote!
         
         //if player is holding note, remove it and lock it until it has been played
-        for iter in self.touchNotePairs{ //!!! O(n) !!! - however, n will never be larger than 8 or 16
-            if iter.value == currPlayerNoteObj{
-                self.touchNotePairs.removeValue(forKey: iter.key)
-                break
-            }
-        }
+        //stopPlayerHoldingCurrentNote()
+        
         //move note to correct y position (if needed) (delay)
         let useSharpsTF:Bool = shouldProduceSharps()
         var correctLocation = self.stave.getNotePosition(note: currentScaleNoteEnum!, octave: octave, ProduceSharps: useSharpsTF,
@@ -372,6 +368,19 @@ class ScalePlayer {
         //play note (delay) (must retype this code incase octave isn't valid
         currPlayerNoteObj!.playNote()
         Thread.sleep(forTimeInterval: playNoteDelay)
+    }
+    
+    //@bug Currently does not work as intended
+    func stopPlayerHoldingCurrentNote(){
+        //self.touchNotePairs = GlobalSpace.ezscene!.touchNotePairs
+        //for iter in self.touchNotePairs{ //!!! O(n) !!! - however, n will never be larger than 8 or 16
+        
+        for iter in GlobalSpace.ezscene!.touchNotePairs{ //!!! O(n) !!! - however, n will never be larger than 8 or 16
+            if iter.value == currPlayerNoteObj{
+                self.touchNotePairs.removeValue(forKey: iter.key)
+                break
+            }
+        }
     }
 
     func playNoteInvariantCheckIsSafe() -> Bool {

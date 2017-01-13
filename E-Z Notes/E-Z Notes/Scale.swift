@@ -16,6 +16,11 @@ class Scale{
     //W, H, W, W, H, W, W
     let minorSteps = [Tone.Whole,Tone.Semi,Tone.Whole,Tone.Whole,Tone.Semi,Tone.Whole,Tone.Whole]
     
+    //W, H, W, W, H, WH, H
+    let harmonicMinorSteps = [Tone.Whole, Tone.Semi, Tone.Whole, Tone.Whole, Tone.Semi, Tone.Three, Tone.Semi]
+    
+
+    
     //PROPERTIES
     private(set) var ScaleStart:NoteEnum = NoteEnum.C
     private(set) var PitchesInScale:[NoteEnum]? = nil
@@ -25,10 +30,13 @@ class Scale{
     enum Tone : Int{
         case Semi = 1
         case Whole = 2
+        case Three = 3
     }
     enum Style : Int{
         case Major = 0
         case Minor
+        case HarmonicMinor
+        //case MelodicMinor not currently supported
     }
     
     enum Direction : Int {
@@ -51,6 +59,9 @@ class Scale{
             return
         case .Minor:
             useStepsToGenerateNotes(Steps: minorSteps, Start: start)
+            return
+        case .HarmonicMinor:
+            useStepsToGenerateNotes(Steps: harmonicMinorSteps, Start: start)
             return
         }
     }
