@@ -3,6 +3,67 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "Keyboard.createBlackKeys() -&gt; ():Keyboard.swift">
+      </ContextState>
+      <ContextState
+         contextName = "Note.positionSubSprites() -&gt; ():Note.swift">
+      </ContextState>
+      <ContextState
+         contextName = "Keyboard.pollKeyTouched(touch : UITouch) -&gt; (CGFloat, NoteEnum?, OctaveEnum?)?:Keyboard.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "key.position.x + self.position.x">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Keyboard.pollKeyTouched(touch : UITouch) -&gt; ():Keyboard.swift">
+      </ContextState>
+      <ContextState
+         contextName = "Note.noteInCPositionButSharpOrFlat() -&gt; Bool:Note.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "Note.noteForCalc.representsNote">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "KeyboardTouchableKey.playNote() -&gt; ():KeyboardTouchableKey.swift">
+      </ContextState>
+      <ContextState
+         contextName = "ScalePlayer.correctIfCurrentCorrectNoteOnSameLineAsLastNote() -&gt; ():ScalePlayer.swift">
+      </ContextState>
+      <ContextState
+         contextName = "ScalePlayer.correctIfCurrentCorrectNoteSkippedLineFromLast() -&gt; ():ScalePlayer.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "GlobalSpace.ezscene?.notes.children as! [SKSpriteNode]&#10;">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "EZNoteScene.createNotes() -&gt; ():EZNoteScene.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.frameSize.height * CGFloat(i) * (equalSpacing)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Note.updateNote(NotesUpdatedPoint : CGPoint, StavePositionInView : CGPoint, Stave : Stave) -&gt; ():Note.swift">
+      </ContextState>
+      <ContextState
+         contextName = "Note.scaleSubSpriteToFitInNote(Sprite : SKSpriteNode) -&gt; ():Note.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.size.width">
+            </PersistentString>
+            <PersistentString
+               value = "sprite.size.width">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "EZNoteScene.(scalePlay() -&gt; ()).(closure #1):EZNoteScene.swift">
          <PersistentStrings>
             <PersistentString
@@ -20,57 +81,13 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "EZNoteScene.touchesBegan(Set&lt;UITouch&gt;, with : UIEvent?) -&gt; ():EZNoteScene.swift">
-      </ContextState>
-      <ContextState
-         contextName = "Note.positionSubSprites() -&gt; ():Note.swift">
-      </ContextState>
-      <ContextState
          contextName = "Scale.useStepsToGenerateNotes(Steps : [Scale.Tone], Start : NoteEnum) -&gt; ():Scale.swift">
       </ContextState>
       <ContextState
-         contextName = "EZNoteScene.createNotes() -&gt; ():EZNoteScene.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "self.frameSize.height * CGFloat(i) * (equalSpacing)">
-            </PersistentString>
-         </PersistentStrings>
+         contextName = "EZNoteScene.touchesBegan(Set&lt;UITouch&gt;, with : UIEvent?) -&gt; ():EZNoteScene.swift">
       </ContextState>
       <ContextState
-         contextName = "KeyboardTouchableKey.playNote() -&gt; ():KeyboardTouchableKey.swift">
-      </ContextState>
-      <ContextState
-         contextName = "Note.scaleSubSpriteToFitInNote(Sprite : SKSpriteNode) -&gt; ():Note.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "self.size.width">
-            </PersistentString>
-            <PersistentString
-               value = "sprite.size.width">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "Keyboard.createBlackKeys() -&gt; ():Keyboard.swift">
-      </ContextState>
-      <ContextState
-         contextName = "Keyboard.pollKeyTouched(touch : UITouch) -&gt; ():Keyboard.swift">
-      </ContextState>
-      <ContextState
-         contextName = "Note.noteInCPositionButSharpOrFlat() -&gt; Bool:Note.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "Note.noteForCalc.representsNote">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "Keyboard.pollKeyTouched(touch : UITouch) -&gt; (CGFloat, NoteEnum?, OctaveEnum?)?:Keyboard.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "key.position.x + self.position.x">
-            </PersistentString>
-         </PersistentStrings>
+         contextName = "EZNoteScene.touchesEnded(Set&lt;UITouch&gt;, with : UIEvent?) -&gt; ():EZNoteScene.swift">
       </ContextState>
    </ContextStates>
 </VariablesViewState>

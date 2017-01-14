@@ -416,7 +416,22 @@ class Stave: SKNode {
         }
         
         //return the note that represents line above it
-        return normalNoteTable(psuedoNote: PseudoNote(rawValue: whiteKeyConvert.rawValue + 1 % PseudoNote.count)!)
+        return normalNoteTable(psuedoNote: PseudoNote(rawValue: (whiteKeyConvert.rawValue + 1) % PseudoNote.count)!)
+    }
+    
+    func getWhiteKeyBelow(currentNote:NoteEnum, useSharps:Bool) -> NoteEnum{
+        var whiteKeyConvert:PseudoNote
+        //convert it to the white key
+        if(useSharps){
+            whiteKeyConvert = pseudoNoteTableForSharps(normalNote: currentNote)
+        } else {
+            whiteKeyConvert = pseudoNoteTableForFlats(normalNote: currentNote)
+        }
+        
+        //return the note that represents line above it
+        return normalNoteTable(psuedoNote:
+            PseudoNote(rawValue: (whiteKeyConvert.rawValue - 1 + PseudoNote.count) % PseudoNote.count)!
+        )
     }
 
     

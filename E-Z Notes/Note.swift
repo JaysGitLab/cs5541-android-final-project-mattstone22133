@@ -319,6 +319,8 @@ class Note: SKSpriteNode {
         hideSubSprites()
     }
     
+    
+    //only supports lower normal or sharp notes
     func lowerByOneSemitone(){
         //correct octave is note is C and goes down to B (the octave should also drop in this situation)
         if let octave = representsOctave{
@@ -346,14 +348,41 @@ class Note: SKSpriteNode {
                 self.flat = true
                 self.normal = false
             } else if self.texture == Note.blueTexture {
-                //Do Nothing
+
                 
-                //untested portion below - may be invalid
-                //if note.isFlatOrSharp() {
-                //    self.texture = Note.redTexture
-                //} else {
-                //    self.texture = Note.blackTexture
-                //}
+            }
+        }
+    }
+    
+    //only supports raising flat or normal notes
+    func raiseByOneSemitone(){
+        //correct octave is note is C and goes down to B (the octave should also drop in this situation)
+        if let octave = representsOctave{
+            if let note = representsNote{
+                if note == NoteEnum.C {
+                    representsOctave = octave.attemptGetHigher()
+                }
+            }
+        }
+        
+        //lower the tone
+        if let note = representsNote {
+            //raise its represents note value
+            representsNote = NoteEnum(rawValue: (note.rawValue + 1 + NoteEnum.count) % NoteEnum.count)
+            
+            //update the correct image
+            if self.texture == Note.redTexture {
+                //do nothing, this shouldn't be encountered in scale logic
+            } else if self.texture == Note.blackTexture {
+                self.texture = Note.redTexture
+                self.sharp = true
+                self.flat = false
+                self.normal = false
+            } else if self.texture == Note.blueTexture {
+                self.texture = Note.blackTexture
+                self.sharp = false
+                self.flat = false
+                self.normal = true
                 
             }
         }

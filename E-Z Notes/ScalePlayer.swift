@@ -9,10 +9,12 @@
 // TODO: change scale player so that it reads whether the first note is sharp/flat and uses sharps vs. flats accordingly
 // TODO: remove scale playing functions from the sceen class
 //
-// Developer quick notes: to stop function where scale attempts to correct notes so that they are never on same line,
+// Developer quick notes1: to stop function where scale attempts to correct notes so that they are never on same line,
 // simply: remove the call to "correctIfCurrentCorrectNoteOnSameLineAsLastNote" from playCorrectNote, this will stop all
 // boolean flags in other methods from doing the behavior. 
 //
+// Developer Quick Note2: comment out the check for skpping line to restore what is believed to be perfect handling of 
+// handling notes that are on the same line
 
 import Foundation
 import SpriteKit
@@ -44,14 +46,20 @@ class ScalePlayer {
     var correctedOctaveForNote:OctaveEnum? = nil
     var currentPlayerNoteEnum:NoteEnum?
     var currentScaleNoteEnum:NoteEnum?
+
+    
+    //same-line-note special check variables
     var hasLastNotePlayed:Bool = false
     var mockNoteLast:Note = Note()
     var mockNoteCurr:Note = Note()
-    
-    //same-line-note special check variables
     var specialCorrectionFlagForSameLineNotes = false
     var whiteNoteEnum:NoteEnum? = nil
     var whiteOctaveEnum:OctaveEnum? = nil
+    
+    // skipped-line-note special check variables
+    var specialCorrectionFlagForSkippedLineNotes = false
+    var hasLastNotePlayedSkippedVersion:Bool = false
+    var mockNoteLastForSkipCheck:Note = Note()
 
 
     
@@ -172,6 +180,9 @@ class ScalePlayer {
          hasLastNotePlayed = false
          whiteNoteEnum = nil
          whiteOctaveEnum = nil
+        
+        specialCorrectionFlagForSameLineNotes = false
+        specialCorrectionFlagForSkippedLineNotes = false
     }
     
     func highlightNote(Note note:Note){
@@ -190,6 +201,10 @@ class ScalePlayer {
         
         //check if currentNote will be on the same line as last note, if so then correct this
         correctIfCurrentCorrectNoteOnSameLineAsLastNote()
+        
+        //chek if current note in scale will skip a line (in the case of harmonic minors)
+        //warning: code below appears to break some scales (E flat minor)
+        //correctIfCurrentCorrectNoteSkippedLineFromLast() //CURRENTLY ONLY SERVES TO DISABLE DOUBLE LINE CHECK ON NEXT ITERATION
         
         //invariant checks (must come after octave calculation)
         if !playNoteInvariantCheckIsSafe(){ return }
@@ -210,7 +225,7 @@ class ScalePlayer {
         //check if there is a last note played, if there isn't then make the current note the last note played (and return)
         if !hasLastNotePlayed {
             hasLastNotePlayed = true
-            setMockNoteLast(currentScaleNoteEnum!, correctedOctaveForNote!)
+            setMockNoteLast(mockNoteLast, currentScaleNoteEnum!, correctedOctaveForNote!)
             return
         }
         
@@ -237,17 +252,17 @@ class ScalePlayer {
                 whiteOctaveEnum = correctedOctaveForNote!
             }
             whiteNoteEnum = stave.getWhiteKeyAbove(currentNote: currentScaleNoteEnum!, useSharps: shouldProduceSharps())
-            setMockNoteLast(whiteNoteEnum!, whiteOctaveEnum!) //updates position as a side effect
+            setMockNoteLast(mockNoteLast, whiteNoteEnum!, whiteOctaveEnum!) //updates position as a side effect
             return
         } else {
             //update the last note played to represent the current values
-            setMockNoteLast(currentScaleNoteEnum!, correctedOctaveForNote!)
+            setMockNoteLast(mockNoteLast, currentScaleNoteEnum!, correctedOctaveForNote!)
         }
         
         
     }
 
-    func setMockNoteLast(_ lastNoteEnum:NoteEnum, _ lastOctEnum:OctaveEnum){
+    func setMockNoteLast(_ mockNoteLast:Note, _ lastNoteEnum:NoteEnum, _ lastOctEnum:OctaveEnum){
         //update mock note data
         mockNoteLast.representsNote = lastNoteEnum
         mockNoteLast.representsOctave = lastOctEnum
@@ -259,6 +274,75 @@ class ScalePlayer {
                 octave: lastOctEnum,
                 ProduceSharps: shouldProduceSharps(),
                 stavePositionOffset: stave.position)
+    }
+
+    //warning may influence scale correction effects from previous
+    //@BUG calling this function will corrupt the output of certain scales (eg Eb minor)
+    func correctIfCurrentCorrectNoteSkippedLineFromLast(){
+        //check if there is a last note played, if there isn't then make the current note the last note played (and return)
+        if !hasLastNotePlayedSkippedVersion {
+            hasLastNotePlayedSkippedVersion = true
+            setMockNoteLast(mockNoteLastForSkipCheck, currentScaleNoteEnum!, correctedOctaveForNote!)
+            return
+        }
+        
+        
+        //if last check found that the note was on the same line, then this logic can be ignored (so return)
+        if specialCorrectionFlagForSameLineNotes {
+            return
+        }
+        
+        //clear any forcing that the last correction may have induced
+        specialCorrectionFlagForSkippedLineNotes = false
+
+        //get location of the last note played by the scale (function below updates its position)
+        let lastPoint = stave.getNotePosition(note: mockNoteLastForSkipCheck.representsNote!,
+                                              octave: mockNoteLastForSkipCheck.representsOctave!,
+                                              ProduceSharps: shouldProduceSharps(), stavePositionOffset: stave.position)
+        
+
+        //get location of the current calcuated note to be played by the scale
+        let currPoint = stave.getNotePosition(note: currentScaleNoteEnum!, octave: correctedOctaveForNote!,
+                                              ProduceSharps: shouldProduceSharps(), stavePositionOffset: stave.position)
+        
+        //determine if notes occupy the same white space
+        if (notesDifferByTwoPositions(lastPoint, currPoint)){
+            //if notes are same, then adjust the scales current calculations to be the same
+            //ASCENDING SPECIFIC CODE BELOW
+            specialCorrectionFlagForSkippedLineNotes = true
+            if(currentScaleNoteEnum == NoteEnum.C) {
+                //if note is C, then white key below is is an octave lower
+                whiteOctaveEnum = correctedOctaveForNote!.attemptGetLower()
+            } else {
+                whiteOctaveEnum = correctedOctaveForNote!
+            }
+            whiteNoteEnum = stave.getWhiteKeyBelow(currentNote: currentScaleNoteEnum!, useSharps: shouldProduceSharps())
+            setMockNoteLast(mockNoteLastForSkipCheck, whiteNoteEnum!, whiteOctaveEnum!) //updates position as a side effect
+            
+            //BELOW prevents a double line error on next iteration
+            //it updates the last point to the point of where a double sharp would occur, see G# harmonic minor
+            //in that scale, F is double sharped to G, since this app doesnt' support double sharp, it should just use G.
+            //However, if you use G, it will cause an error in the same line check (G and Gsharp are on the same line)
+            //Updating the point below prevents that from happening because it stores the location of F (and FSharpSharp)
+            setMockNoteLast(mockNoteLast, whiteNoteEnum!, whiteOctaveEnum!) //updates for other check (it has invalid position)
+            return
+        } else {
+            //update the last note played to represent the current values
+            //below is done by the other check, but in order to prevent a dependency on another function it is done again
+            //NOTE: these arguments will not be corrupted from last check because this method would returned before this point
+            setMockNoteLast(mockNoteLastForSkipCheck, currentScaleNoteEnum!, correctedOctaveForNote!) //should already be done by other check
+        }
+        
+        
+    }
+    
+    func notesDifferByTwoPositions(_ lastNotePoint:CGPoint, _ currNotePoint:CGPoint) -> Bool {
+        //note: noteSpacing represents the distance between a bar and an invisible bar
+        let calcSkippedPoint = CGPoint(x: lastNotePoint.x, y: lastNotePoint.y + stave.noteSpacing * 2)
+        
+        //check if the currNotePoint is at the same position as the calculated skip point 
+        //(withing a thread hold of 10% of notespacing)
+        return yValuesSameWithinThreshold(currNotePoint, calcSkippedPoint, stave.noteSpacing * 0.1)
     }
     
     func shouldProduceSharps() -> Bool{
@@ -273,8 +357,6 @@ class ScalePlayer {
     
     
     func currentNoteIsCorrectlySetUp() -> Bool {
-        
-        
         //check octave
         if currentPlayerNoteEnum! != currentScaleNoteEnum! {
             return false
@@ -335,16 +417,23 @@ class ScalePlayer {
         
         if(specialCorrectionFlagForSameLineNotes){
             correctLocation = mockNoteLast.position
+        } else if (specialCorrectionFlagForSkippedLineNotes){
+            //using this location requires a double sharp functionality (see note in check)
+            //therefore, using this as the location is un-supported
+            //correctLocation = mockNoteLastForSkipCheck.position
         }
         
         //use sharps or flats? currently using sharps if scale is major and flats if the scale is minor
         //update player note value
         stave.findNoteValueAndOctave(note: currPlayerNoteObj!, futureNotePosition: correctLocation, StavePosition: stave.position)
         
-        if (!specialCorrectionFlagForSameLineNotes){
+        //NO SPECIAL CORRECTION
+        if (!specialCorrectionFlagForSameLineNotes && !specialCorrectionFlagForSkippedLineNotes){
             //movement will make a black note, so change it to sharp or flat depending on what is to be used
             adjustNoteAppearanceForFlatSharp(note: currPlayerNoteObj!, correctNoteEnum: currentScaleNoteEnum!, useSharps: useSharpsTF)
-        } else {
+        }
+        //SPECIAL CORRECTION FOR NOTE ON SAME LINE
+        else if (specialCorrectionFlagForSameLineNotes){
             //this means that the note requires special handling, simply lower the note by 1 semitone (specific to ascending scales)
             currPlayerNoteObj!.lowerByOneSemitone()
             
@@ -352,6 +441,16 @@ class ScalePlayer {
             if (currPlayerNoteObj!.representsNote != currentScaleNoteEnum){
                 currPlayerNoteObj!.lowerByOneSemitone()
             }
+        }
+        //SPECIAL CORRECTION FOR NOTE THAT SKIPPED A LINE (harmonic minors)
+        else if (specialCorrectionFlagForSkippedLineNotes){
+            //THIS REQUIRES HANDLING OF DOUBLE SHARPS - so it is not supported
+            //currPlayerNoteObj!.raiseByOneSemitone()
+            
+            //sometimes the player may have a flat in the wrong location, and an additional drop in semi-tone may be requried
+            //if (currPlayerNoteObj!.representsNote != currentScaleNoteEnum){
+            //    currPlayerNoteObj!.lowerByOneSemitone()
+            //}
         }
         
         
